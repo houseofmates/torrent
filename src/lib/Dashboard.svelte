@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { torrents, maindata, addToast, modal, startPolling, stopPolling, doPauseTorrent, doResumeTorrent, doDeleteTorrent, doForceRecheck, doForceStart, doReannounce } from '$lib/stores';
+	import { torrents, maindata, addToast, modal, startPolling, stopPolling } from '$lib/stores';
 	import TorrentCard from '$lib/TorrentCard.svelte';
 	import AddTorrentModal from '$lib/AddTorrentModal.svelte';
 	import ContextMenu, { type ContextMenuItem } from '$lib/ContextMenu.svelte';
@@ -19,10 +19,52 @@
 	let loading = $state(true);
 	let error = $state('');
 	let hasLoadedOnce = $state(false);
+	let loadTimer: ReturnType<typeof setTimeout> | null = null;
+
+	let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+	let longPressFired = $state(false);
+
+	let filteredTorrents = $derived.by(() => {
+		const items = $torrents as Torrent[];
+		let result = items.filter((t) =>
+			t.name.toLowerCase().includes(searchQuery.toLowerCase())
+		);
+
+		result.sort((a, b) => {
+			let comparison = 0;
+			switch (sortField) {
+				case 'name':
+					comparison = a.name.localeCompare(b.name);
+					break;
+				case 'progress':
+					comparison = (a.progress || 0) - (b.progress || 0);
+					break;
+				case 'size':
+					comparison = (a.size || 0) - (b.size || 0);
+					break;
+				case 'dlspeed':
+					comparison = (a.dlspeed || 0) - (b.dlspeed || 0);
+					break;
+				case 'upspeed':
+					comparison = (a.upspeed || 0) - (b.upspeed || 0);
+					break;
+				case 'eta':
+					comparison = (a.eta || 0) - (b.eta || 0);
+					break;
+				case 'ratio':
+					comparison = (a.ratio || 0) - (b.ratio || 0);
+					break;
+				case 'state':
+					comparison = (a.state || '').localeCompare(b.state || '');
+					break;
+			}
+			return sortDirection === 'desc' ? -comparison : comparison;
+		});
+
+		return result;
+	});
 
 	// force-loading fallback: if no data after 8s, show error state
-	let loadTimer = $state<ReturnType<typeof setTimeout> | null>(null);
-
 	$effect(() => {
 		if (loading && !loadTimer) {
 			loadTimer = setTimeout(() => {
@@ -49,55 +91,6 @@
 		}
 	});
 
-			return result;
-		});
-
-		let longPressTimer: ReturnType<typeof setTimeout> | null = null;
-		let longPressFired = $state(false);
-
-		function handleTouchStart(e: TouchEvent, torrent: Torrent) {
-			longPressFired = false;
-			longPressTimer = setTimeout(() => {
-				longPressFired = true;
-				const touch = e.touches[0];
-				handleContextMenu({
-					preventDefault: () => {},
-					clientX: touch.clientX,
-					clientY: touch.clientY
-				} as MouseEvent, torrent);
-			}, 500);
-		}
-
-		function handleTouchEnd() {
-			if (longPressTimer) {
-				clearTimeout(longPressTimer);
-				longPressTimer = null;
-			}
-		}
-
-		function handleContextMenuSafe(e: MouseEvent, torrent: Torrent) {
-			if (longPressFired) {
-				longPressFired = false;
-				return;
-			}
-			handleContextMenu(e, torrent);
-		}
-
-	let serverState = $derived($maindata as any);
-
-	$effect(() => {
-		const md = $maindata as any;
-		if (md?.server_state) {
-			uploadSpeed = md.server_state.up_info_speed || 0;
-			downloadSpeed = md.server_state.dl_info_speed || 0;
-			if (!hasLoadedOnce) {
-				loading = false;
-				hasLoadedOnce = true;
-			}
-			error = '';
-		}
-	});
-
 	function toggleSort(field: SortField) {
 		if (sortField === field) {
 			sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
@@ -114,21 +107,49 @@
 		return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${units[i]}`;
 	}
 
+	function handleTouchStart(e: TouchEvent, torrent: Torrent) {
+		longPressFired = false;
+		longPressTimer = setTimeout(() => {
+			longPressFired = true;
+			const touch = e.touches[0];
+			handleContextMenu({
+				preventDefault: () => {},
+				clientX: touch.clientX,
+				clientY: touch.clientY
+			} as MouseEvent, torrent);
+		}, 500);
+	}
+
+	function handleTouchEnd() {
+		if (longPressTimer) {
+			clearTimeout(longPressTimer);
+			longPressTimer = null;
+		}
+	}
+
+	function handleContextMenuSafe(e: MouseEvent, torrent: Torrent) {
+		if (longPressFired) {
+			longPressFired = false;
+			return;
+		}
+		handleContextMenu(e, torrent);
+	}
+
 	function handleContextMenu(e: MouseEvent, torrent: Torrent) {
 		e.preventDefault();
 		const isPaused = torrent.state.includes('paused');
 
 		const items: ContextMenuItem[] = [
 			{ label: isPaused ? 'resume' : 'pause', action: async () => {
-				if (isPaused) await doResumeTorrent(torrent.hash);
-				else await doPauseTorrent(torrent.hash);
+				if (isPaused) { await import('$lib/stores').then(m => m.doResumeTorrent(torrent.hash)); }
+				else { await import('$lib/stores').then(m => m.doPauseTorrent(torrent.hash)); }
 			}},
-			{ label: 'force start', action: () => doForceStart(torrent.hash) },
-			{ label: 'force recheck', action: () => doForceRecheck(torrent.hash) },
-			{ label: 'reannounce', action: () => doReannounce(torrent.hash) },
+			{ label: 'force start', action: () => import('$lib/stores').then(m => m.doForceStart(torrent.hash)) },
+			{ label: 'force recheck', action: () => import('$lib/stores').then(m => m.doForceRecheck(torrent.hash)) },
+			{ label: 'reannounce', action: () => import('$lib/stores').then(m => m.doReannounce(torrent.hash)) },
 			{ label: '', action: () => {}, separator: true },
-			{ label: 'delete', danger: true, action: () => doDeleteTorrent(torrent.hash, false) },
-			{ label: 'delete with files', danger: true, action: () => doDeleteTorrent(torrent.hash, true) }
+			{ label: 'delete', danger: true, action: () => import('$lib/stores').then(m => m.doDeleteTorrent(torrent.hash, false)) },
+			{ label: 'delete with files', danger: true, action: () => import('$lib/stores').then(m => m.doDeleteTorrent(torrent.hash, true)) }
 		];
 
 		contextMenu = {

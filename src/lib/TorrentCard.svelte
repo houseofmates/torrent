@@ -133,3 +133,36 @@
 			{/if}
 			{#if torrent.num_leechs !== undefined}
 				<span style="color: var(--color-danger);">l: {torrent.num_leechs}</span>
+			{/if}
+		</div>
+
+		{#if showActions}
+			<div class="flex gap-1 mt-1">
+				<button
+					onclick={togglePause}
+					class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
+					style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary);"
+					aria-label={torrent.state.includes('paused') ? 'resume' : 'pause'}
+				>
+					{torrent.state.includes('paused') ? '▶' : '⏸'}
+				</button>
+				<button
+					onclick={recheck}
+					class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
+					style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary);"
+					aria-label="recheck"
+				>
+					↻
+				</button>
+				<button
+					onclick={() => deleteTorrent(false)}
+					class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
+					style="background: var(--color-bg-dark); border-color: var(--color-danger); border-radius: 6px; color: var(--color-danger);"
+					aria-label="delete"
+				>
+					✕
+				</button>
+			</div>
+		{/if}
+	</div>
+</div>

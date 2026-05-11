@@ -2,7 +2,6 @@
 	import { modal, doAddTorrent, categories, preferences, addToast } from '$lib/stores';
 	import { onDestroy } from 'svelte';
 
-	let $modal = $state($modal);
 	let show = $derived($modal?.type === 'add');
 	let input = $state('');
 	let savePath = $state('');
@@ -12,10 +11,7 @@
 	let selectedFiles = $state<File[]>([]);
 	let fileInput: HTMLInputElement | null = $state(null);
 
-	let $categories = $state($categories);
 	let categoryList = $derived(Object.entries($categories || {}));
-
-	let $preferences = $state($preferences);
 
 	$effect(() => {
 		if (show && $preferences?.save_path) {

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Torrent } from './types';
-	import { addToast } from './stores';
+	import { doPauseTorrent, doResumeTorrent, doForceRecheck, doDeleteTorrent, addToast } from './stores';
 
 	interface Props {
 		torrent: Torrent;
@@ -10,18 +10,22 @@
 	let showActions = $state(false);
 
 	const statePalette: Record<string, { bg: string; text: string }> = {
-		downloading: { bg: 'var(--color-accent-blue)', text: '#fff' },
-		seeding:     { bg: '#22c55e', text: '#fff' },
-		uploading:   { bg: '#22c55e', text: '#fff' },
-		pausedDL:    { bg: 'var(--color-accent-yellow)', text: '#000' },
-		pausedUP:    { bg: 'var(--color-accent-yellow)', text: '#000' },
-		error:       { bg: 'var(--color-danger)', text: '#fff' },
-		missingFiles:{ bg: 'var(--color-danger)', text: '#fff' },
-		queuedUP:    { bg: 'var(--color-text-info)', text: '#000' },
-		queuedDL:    { bg: 'var(--color-text-info)', text: '#000' },
-		stalledUP:   { bg: '#22c55e', text: '#fff' },
-		stalledDL:   { bg: 'var(--color-accent-blue)', text: '#fff' },
-		forcedUP:    { bg: 'var(--color-accent-blue)', text: '#fff' },
+		downloading:   { bg: 'var(--color-accent-blue)', text: '#050505' },
+		seeding:       { bg: 'var(--color-success)', text: '#050505' },
+		uploading:     { bg: 'var(--color-success)', text: '#050505' },
+		pausedDL:      { bg: 'var(--color-accent-yellow)', text: '#050505' },
+		pausedUP:      { bg: 'var(--color-accent-yellow)', text: '#050505' },
+		error:         { bg: 'var(--color-danger)', text: '#fff' },
+		missingFiles:  { bg: 'var(--color-danger)', text: '#fff' },
+		queuedUP:      { bg: 'var(--color-text-info)', text: '#050505' },
+		queuedDL:      { bg: 'var(--color-text-info)', text: '#050505' },
+		stalledUP:     { bg: 'var(--color-success)', text: '#050505' },
+		stalledDL:     { bg: 'var(--color-accent-blue)', text: '#050505' },
+		forcedUP:      { bg: 'var(--color-accent-blue)', text: '#050505' },
+		metaDL:        { bg: 'var(--color-text-info)', text: '#050505' },
+		forcedDL:      { bg: 'var(--color-accent-blue)', text: '#050505' },
+		allocating:    { bg: 'var(--color-text-info)', text: '#050505' },
+		moving:        { bg: 'var(--color-text-info)', text: '#050505' },
 	};
 
 	function getStateColor(state: string): { bg: string; text: string } {
@@ -30,16 +34,28 @@
 
 	function getStateText(state: string): string {
 		const labels: Record<string, string> = {
-			downloading: 'downloading', seeding: 'seeding', uploading: 'uploading',
-			pausedDL: 'paused', pausedUP: 'paused', error: 'error',
-			missingFiles: 'missing files', queuedUP: 'queued', queuedDL: 'queued',
-			stalledUP: 'stalled', stalledDL: 'stalled',
+			downloading: 'downloading',
+			seeding: 'seeding',
+			uploading: 'uploading',
+			pausedDL: 'paused',
+			pausedUP: 'paused',
+			error: 'error',
+			missingFiles: 'missing files',
+			queuedUP: 'queued',
+			queuedDL: 'queued',
+			stalledUP: 'stalled',
+			stalledDL: 'stalled',
+			metaDL: 'metadata',
+			forcedDL: 'forced',
+			forcedUP: 'forced',
+			allocating: 'allocating',
+			moving: 'moving',
 		};
 		return labels[state] ?? state;
 	}
 
 	function formatBytes(bytes: number): string {
-		if (bytes === 0) return '0 b';
+		if (!bytes || bytes === 0) return '0 b';
 		const units = ['b', 'kb', 'mb', 'gb', 'tb'];
 		const i = Math.floor(Math.log(bytes) / Math.log(1024));
 		return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${units[i]}`;
@@ -52,51 +68,38 @@
 		return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
 	}
 
-	async function api(action: string, hashes: string, extra?: Record<string, string>) {
-		try {
-			const params = new URLSearchParams({ hashes, ...extra });
-			const res = await fetch(`/api/torrents/${action}`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				body: params
-			});
-			if (!res.ok) throw new Error(`http ${res.status}`);
-			return true;
-		} catch (err) {
-			addToast(`${action} failed.`, 'error');
-			return false;
+	async function togglePause() {
+		const isPaused = torrent.state.includes('paused');
+		if (isPaused) {
+			await doResumeTorrent(torrent.hash);
+		} else {
+			await doPauseTorrent(torrent.hash);
 		}
 	}
 
-	async function togglePause() {
-		const isPaused = torrent.state.includes('paused');
-		const ok = await api(isPaused ? 'resume' : 'pause', torrent.hash);
-		if (ok) addToast(isPaused ? 'resumed' : 'paused', 'success');
-	}
-
-	async function forceRecheck() {
-		const ok = await api('recheck', torrent.hash);
-		if (ok) addToast('recheck started', 'success');
+	async function recheck() {
+		await doForceRecheck(torrent.hash);
 	}
 
 	async function deleteTorrent(deleteFiles = false) {
-		const ok = await api('delete', torrent.hash, { deleteFiles: String(deleteFiles) });
-		if (ok) addToast('deleted', 'success');
+		await doDeleteTorrent(torrent.hash, deleteFiles);
 	}
+
+	let progressPct = $derived(Math.round((torrent.progress ?? 0) * 100));
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="border border-border-subtle p-4 relative transition-colors duration-150 hover:border-border-medium"
-	style="background: var(--color-surface-card); border-radius: 10px;"
+	class="border p-4 relative transition-colors duration-150 hover:border-border-medium cursor-default"
+	style="background: var(--color-surface-card); border-color: var(--color-border-subtle); border-radius: 10px;"
 	onmouseenter={() => showActions = true}
 	onmouseleave={() => showActions = false}
 >
 	<!-- header -->
 	<div class="flex items-start justify-between gap-3 mb-3">
-		<h3 class="text-sm leading-tight text-white line-clamp-2 pr-16">{torrent.name}</h3>
+		<h3 class="text-sm leading-tight line-clamp-2 pr-20">{torrent.name}</h3>
 		<span
-			class="px-2 py-0.5 text-[10px] whitespace-nowrap"
+			class="px-2 py-0.5 text-[10px] font-bold whitespace-nowrap"
 			style="border-radius: 9999px; background: {getStateColor(torrent.state).bg}; color: {getStateColor(torrent.state).text};"
 		>
 			{getStateText(torrent.state)}
@@ -104,46 +107,56 @@
 	</div>
 
 	<!-- progress bar -->
-	<div class="mb-2">
-		<div class="w-full border border-border-subtle" style="border-radius: 9999px; height: 6px; background: var(--color-bg-dark);">
+	<div class="mb-3">
+		<div class="w-full border" style="border-color: var(--color-border-subtle); border-radius: 9999px; height: 6px; background: var(--color-bg-dark);">
 			<div
 				class="transition-all duration-300"
-				style="height: 100%; width: {Math.round(torrent.progress * 100)}%; background: {getStateColor(torrent.state).bg}; border-radius: 9999px;"
+				style="height: 100%; width: {progressPct}%; background: {getStateColor(torrent.state).bg}; border-radius: 9999px;"
 			></div>
 		</div>
 	</div>
 
 	<!-- stats row -->
 	<div class="flex flex-wrap gap-x-4 gap-y-1 text-xs" style="font-variant-numeric: tabular-nums;">
-		<span class="text-white">{formatBytes(torrent.downloaded)} / {formatBytes(torrent.size)}</span>
-		<span class="text-white">↓ {formatBytes(torrent.dlspeed)}/s</span>
-		<span class="text-white">↑ {formatBytes(torrent.upspeed)}/s</span>
-		<span>eta: <span class="text-white">{formatETA(torrent.eta)}</span></span>
-		<span>ratio: <span class="text-white">{torrent.ratio.toFixed(2)}</span></span>
+		<span>{formatBytes(torrent.downloaded)} / {formatBytes(torrent.size)}</span>
+		{#if torrent.dlspeed > 0}
+			<span style="color: var(--color-accent-blue);">↓ {formatBytes(torrent.dlspeed)}/s</span>
+		{/if}
+		{#if torrent.upspeed > 0}
+			<span style="color: var(--color-success);">↑ {formatBytes(torrent.upspeed)}/s</span>
+		{/if}
+		<span>eta: {formatETA(torrent.eta)}</span>
+		<span>ratio: {(torrent.ratio ?? 0).toFixed(2)}</span>
+		{#if torrent.num_seeds !== undefined}
+			<span style="color: var(--color-success);">s: {torrent.num_seeds}</span>
+		{/if}
+		{#if torrent.num_leechs !== undefined}
+			<span style="color: var(--color-danger);">l: {torrent.num_leechs}</span>
+		{/if}
 	</div>
 
 	<!-- hover actions -->
 	{#if showActions}
-		<div class="absolute top-2 right-2 flex gap-1">
+		<div class="absolute top-3 right-3 flex gap-1">
 			<button
 				onclick={togglePause}
-				class="p-1.5 text-[11px] transition-all duration-150 active:scale-95 border"
-				style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: #fff;"
+				class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
+				style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary);"
 				aria-label={torrent.state.includes('paused') ? 'resume' : 'pause'}
 			>
 				{torrent.state.includes('paused') ? '▶' : '⏸'}
 			</button>
 			<button
-				onclick={forceRecheck}
-				class="p-1.5 text-[11px] transition-all duration-150 active:scale-95 border"
-				style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: #fff;"
+				onclick={recheck}
+				class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
+				style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary);"
 				aria-label="recheck"
 			>
 				↻
 			</button>
 			<button
 				onclick={() => deleteTorrent(false)}
-				class="p-1.5 text-[11px] transition-all duration-150 active:scale-95 border"
+				class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
 				style="background: var(--color-bg-dark); border-color: var(--color-danger); border-radius: 6px; color: var(--color-danger);"
 				aria-label="delete"
 			>

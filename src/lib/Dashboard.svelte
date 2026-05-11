@@ -33,30 +33,14 @@
 		result.sort((a, b) => {
 			let comparison = 0;
 			switch (sortField) {
-				case 'name':
-					comparison = a.name.localeCompare(b.name);
-					break;
-				case 'progress':
-					comparison = (a.progress || 0) - (b.progress || 0);
-					break;
-				case 'size':
-					comparison = (a.size || 0) - (b.size || 0);
-					break;
-				case 'dlspeed':
-					comparison = (a.dlspeed || 0) - (b.dlspeed || 0);
-					break;
-				case 'upspeed':
-					comparison = (a.upspeed || 0) - (b.upspeed || 0);
-					break;
-				case 'eta':
-					comparison = (a.eta || 0) - (b.eta || 0);
-					break;
-				case 'ratio':
-					comparison = (a.ratio || 0) - (b.ratio || 0);
-					break;
-				case 'state':
-					comparison = (a.state || '').localeCompare(b.state || '');
-					break;
+				case 'name': comparison = a.name.localeCompare(b.name); break;
+				case 'progress': comparison = (a.progress || 0) - (b.progress || 0); break;
+				case 'size': comparison = (a.size || 0) - (b.size || 0); break;
+				case 'dlspeed': comparison = (a.dlspeed || 0) - (b.dlspeed || 0); break;
+				case 'upspeed': comparison = (a.upspeed || 0) - (b.upspeed || 0); break;
+				case 'eta': comparison = (a.eta || 0) - (b.eta || 0); break;
+				case 'ratio': comparison = (a.ratio || 0) - (b.ratio || 0); break;
+				case 'state': comparison = (a.state || '').localeCompare(b.state || ''); break;
 			}
 			return sortDirection === 'desc' ? -comparison : comparison;
 		});
@@ -112,74 +96,50 @@
 		longPressTimer = setTimeout(() => {
 			longPressFired = true;
 			const touch = e.touches[0];
-			handleContextMenu({
-				preventDefault: () => {},
-				clientX: touch.clientX,
-				clientY: touch.clientY
-			} as MouseEvent, torrent);
+			handleContextMenu({ preventDefault: () => {}, clientX: touch.clientX, clientY: touch.clientY } as MouseEvent, torrent);
 		}, 500);
 	}
 
 	function handleTouchEnd() {
-		if (longPressTimer) {
-			clearTimeout(longPressTimer);
-			longPressTimer = null;
-		}
+		if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
 	}
 
 	function handleContextMenuSafe(e: MouseEvent, torrent: Torrent) {
-		if (longPressFired) {
-			longPressFired = false;
-			return;
-		}
+		if (longPressFired) { longPressFired = false; return; }
 		handleContextMenu(e, torrent);
 	}
 
 	function handleContextMenu(e: MouseEvent, torrent: Torrent) {
 		e.preventDefault();
 		const isPaused = torrent.state.includes('paused');
-
-		const items: ContextMenuItem[] = [
-			{ label: isPaused ? 'resume' : 'pause', action: async () => {
-				if (isPaused) { await import('$lib/stores').then(m => m.doResumeTorrent(torrent.hash)); }
-				else { await import('$lib/stores').then(m => m.doPauseTorrent(torrent.hash)); }
-			}},
-			{ label: 'force start', action: () => import('$lib/stores').then(m => m.doForceStart(torrent.hash)) },
-			{ label: 'force recheck', action: () => import('$lib/stores').then(m => m.doForceRecheck(torrent.hash)) },
-			{ label: 'reannounce', action: () => import('$lib/stores').then(m => m.doReannounce(torrent.hash)) },
-			{ label: '', action: () => {}, separator: true },
-			{ label: 'delete', danger: true, action: () => import('$lib/stores').then(m => m.doDeleteTorrent(torrent.hash, false)) },
-			{ label: 'delete with files', danger: true, action: () => import('$lib/stores').then(m => m.doDeleteTorrent(torrent.hash, true)) }
-		];
-
 		contextMenu = {
-			items,
+			items: [
+				{ label: isPaused ? 'resume' : 'pause', action: async () => {
+					const s = await import('$lib/stores');
+					isPaused ? s.doResumeTorrent(torrent.hash) : s.doPauseTorrent(torrent.hash);
+				}},
+				{ label: 'force start', action: async () => { (await import('$lib/stores')).doForceStart(torrent.hash); } },
+				{ label: 'force recheck', action: async () => { (await import('$lib/stores')).doForceRecheck(torrent.hash); } },
+				{ label: 'reannounce', action: async () => { (await import('$lib/stores')).doReannounce(torrent.hash); } },
+				{ label: '', action: () => {}, separator: true },
+				{ label: 'delete', danger: true, action: async () => { (await import('$lib/stores')).doDeleteTorrent(torrent.hash, false); } },
+				{ label: 'delete with files', danger: true, action: async () => { (await import('$lib/stores')).doDeleteTorrent(torrent.hash, true); } }
+			],
 			x: e.clientX,
 			y: e.clientY,
 			torrent
 		};
 	}
 
-	onMount(() => {
-		startPolling(2000);
-	});
-
-	onDestroy(() => {
-		stopPolling();
-	});
+	onMount(() => { startPolling(2000); });
+	onDestroy(() => { stopPolling(); });
 </script>
 
 <AddTorrentModal />
 {#if contextMenu}
-	<ContextMenu
-		items={contextMenu.items}
-		x={contextMenu.x}
-		y={contextMenu.y}
-		onclose={() => contextMenu = null}
-	/>
+	<ContextMenu items={contextMenu.items} x={contextMenu.x} y={contextMenu.y} onclose={() => contextMenu = null} />
 {/if}
 
-<!-- main content -->
 <div class="px-4 sm:px-6 py-4 pb-24 sm:pb-6" style="max-width: 1200px; margin: 0 auto;">
 	<!-- speed bar -->
 	<div class="flex items-center justify-between mb-4">
@@ -187,24 +147,19 @@
 			<span style="color: var(--color-accent-blue);">↓ {formatSpeed(downloadSpeed)}</span>
 			<span style="color: var(--color-success);">↑ {formatSpeed(uploadSpeed)}</span>
 		</div>
-		<button
-			onclick={() => modal.set({ type: 'add' })}
+		<button onclick={() => modal.set({ type: 'add' })}
 			class="px-4 py-2 text-sm font-bold transition-all duration-150 active:scale-[0.98]"
 			style="background: var(--color-accent-blue); border-radius: 8px; color: #050505;"
-			aria-label="add torrent"
-		>+ add</button>
+			aria-label="add torrent">+ add</button>
 	</div>
 
-	<!-- controls row -->
+	<!-- controls -->
 	<div class="flex flex-col sm:flex-row gap-3 mb-6">
 		<div class="flex-1">
-			<input
-				type="text"
-				bind:value={searchQuery}
+			<input type="text" bind:value={searchQuery}
 				class="w-full px-4 py-3 border text-sm"
 				style="background: var(--color-surface-input); border-color: var(--color-border-subtle); border-radius: 8px; color: var(--color-text-primary);"
-				placeholder="search torrents..."
-			/>
+				placeholder="search torrents..." />
 		</div>
 		<div class="flex gap-1.5 flex-wrap">
 			{#each ['name', 'progress', 'size', 'state'] as field}
@@ -212,9 +167,7 @@
 					class="px-3 py-2 text-xs border transition-all duration-150 active:scale-[0.98]"
 					style="background: {sortField === field ? 'var(--color-accent-blue)' : 'var(--color-surface-input)'}; border-color: {sortField === field ? 'var(--color-accent-blue)' : 'var(--color-border-subtle)'}; border-radius: 6px; color: {sortField === field ? '#050505' : 'var(--color-text-primary)'};"
 					onclick={() => toggleSort(field as SortField)}
-				>
-					{field}{sortField === field ? (sortDirection === 'desc' ? ' ↓' : ' ↑') : ''}
-				</button>
+				>{field}{sortField === field ? (sortDirection === 'desc' ? ' ↓' : ' ↑') : ''}</button>
 			{/each}
 		</div>
 	</div>
@@ -222,7 +175,7 @@
 	<!-- states -->
 	{#if loading}
 		<div class="flex flex-col gap-3">
-			{#each Array(4) as _, i}
+			{#each Array(4) as _}
 				<div class="border p-4" style="border-color: var(--color-border-subtle); background: var(--color-surface-card); border-radius: 10px;">
 					<div>
 						<div class="w-3/4 mb-3 animate-shimmer" style="background: var(--color-border-subtle); height: 14px; border-radius: 4px;"></div>
@@ -239,32 +192,26 @@
 	{:else if error}
 		<div class="text-center py-16">
 			<p class="text-sm mb-4" style="color: var(--color-danger);">{error}</p>
-			<button
-				onclick={() => { loading = true; error = ''; startPolling(); }}
+			<button onclick={() => { loading = true; error = ''; startPolling(); }}
 				class="px-4 py-2 text-sm font-bold transition-all duration-150 active:scale-[0.98]"
-				style="background: var(--color-accent-blue); border-radius: 8px; color: #050505;"
-			>retry</button>
+				style="background: var(--color-accent-blue); border-radius: 8px; color: #050505;">retry</button>
 		</div>
 	{:else if filteredTorrents.length === 0}
 		<div class="text-center py-16">
 			<p class="text-sm mb-1" style="color: var(--color-accent-yellow);">{searchQuery ? 'no matches' : 'no torrents'}</p>
 			<p class="text-xs" style="color: var(--color-text-info);">
-				{searchQuery
-					? `nothing found for "${searchQuery}"`
-					: 'add a magnet link or url to get started.'}
+				{searchQuery ? `nothing found for "${searchQuery}"` : 'add a magnet link or url to get started.'}
 			</p>
 		</div>
 	{:else}
 		<div class="flex flex-col gap-3" role="list">
 			{#each filteredTorrents as torrent (torrent.hash)}
-				<div
-					role="listitem"
+				<div role="listitem"
 					oncontextmenu={(e) => handleContextMenuSafe(e, torrent)}
 					ontouchstart={(e) => handleTouchStart(e, torrent)}
 					ontouchend={handleTouchEnd}
 					ontouchmove={handleTouchEnd}
-					ontouchcancel={handleTouchEnd}
-				>
+					ontouchcancel={handleTouchEnd}>
 					<TorrentCard {torrent} />
 				</div>
 			{/each}

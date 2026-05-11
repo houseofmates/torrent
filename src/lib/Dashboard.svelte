@@ -244,7 +244,14 @@
 	{:else}
 		<div class="flex flex-col gap-3" role="list">
 			{#each filteredTorrents as torrent (torrent.hash)}
-				<div role="listitem" oncontextmenu={(e) => handleContextMenu(e, torrent)}>
+				<div
+					role="listitem"
+					oncontextmenu={(e) => handleContextMenuSafe(e, torrent)}
+					ontouchstart={(e) => handleTouchStart(e, torrent)}
+					ontouchend={handleTouchEnd}
+					ontouchmove={handleTouchEnd}
+					ontouchcancel={handleTouchEnd}
+				>
 					<TorrentCard {torrent} />
 				</div>
 			{/each}

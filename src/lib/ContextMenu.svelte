@@ -45,13 +45,13 @@
 	let adjustedY = $derived(y + items.length * 40 > window.innerHeight ? window.innerHeight - (items.length * 40) : y);
 </script>
 
-	<!-- svelte-ignore a11y_click_events_have_key_events a11y_interactive_supports_focus -->
-	<div
+<div
 		class="fixed z-[1000] border py-1"
 		style="left: {adjustedX}px; top: {adjustedY}px; background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 8px; min-width: 180px; box-shadow: 0 4px 12px rgba(0,0,0,0.4);"
 		onclick={(e) => e.stopPropagation()}
 		oncontextmenu={(e) => { e.preventDefault(); e.stopPropagation(); }}
 		role="menu"
+		tabindex="-1"
 	>
 	{#each items as item}
 		{#if item.separator}

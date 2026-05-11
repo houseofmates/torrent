@@ -136,7 +136,7 @@
 {/if}
 
 <!-- main content -->
-<div class="px-4 sm:px-6 py-4" style="max-width: 1200px; margin: 0 auto;">
+<div class="px-4 sm:px-6 py-4 pb-24 sm:pb-6" style="max-width: 1200px; margin: 0 auto;">
 	<!-- speed bar -->
 	<div class="flex items-center justify-between mb-4">
 		<div class="flex gap-4 text-sm" style="font-variant-numeric: tabular-nums;">

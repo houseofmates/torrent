@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { isAuthenticated, doLogout } from '$lib/stores';
+	import ContextMenu, { type ContextMenuItem } from '$lib/ContextMenu.svelte';
 
 	let { children } = $props();
 
@@ -15,6 +16,39 @@
 	function navTo(href: string) {
 		goto(href);
 	}
+
+	let contextMenu = $state<{ items: ContextMenuItem[]; x: number; y: number } | null>(null);
+
+	function openSettingsFromEvent(e: MouseEvent) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		contextMenu = {
+			items: [
+				{
+					label: 'settings',
+					action: () => navTo('/settings')
+				}
+			],
+			x: e.clientX,
+			y: e.clientY
+		};
+	}
+
+	$effect(() => {
+		function onContextMenu(e: MouseEvent) {
+			const target = e.target as HTMLElement | null;
+			if (!target) return;
+
+			// Keep existing contextmenu behavior intact for other UI elements.
+			if (target.closest('button, a, input, select, textarea, [role="menu"]')) return;
+
+			openSettingsFromEvent(e);
+		}
+
+		window.addEventListener('contextmenu', onContextMenu);
+		return () => window.removeEventListener('contextmenu', onContextMenu);
+	});
 </script>
 
 <div class="min-h-[100dvh]" style="background: var(--color-bg-primary);">
@@ -60,6 +94,11 @@
 	</header>
 
 	{@render children()}
+
+	{#if contextMenu}
+		<ContextMenu items={contextMenu.items} x={contextMenu.x} y={contextMenu.y} onclose={() => (contextMenu = null)} />
+	{/if}
+
 	<Toast />
 
 	<!-- mobile bottom nav -->

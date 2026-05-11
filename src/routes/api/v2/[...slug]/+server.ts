@@ -145,7 +145,3 @@ export async function POST({
 	request: Request;
 	params: { slug: string };
 	url: URL;
-}) {
-	const body = await request.text();
-	return proxyRequest(request, 'POST', params, url, body);
-}

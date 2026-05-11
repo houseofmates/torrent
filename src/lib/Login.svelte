@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { doLogin } from '$lib/stores';
+	import { doLogin, addToast } from '$lib/stores';
 
 	let username = $state('');
 	let password = $state('');
@@ -13,7 +13,9 @@
 
 		const ok = await doLogin(username, password);
 		if (!ok) {
-			error = 'login failed. check credentials.';
+			// doLogin shows a toast for connection errors already.
+			// only show inline error for credential failures (no toast shown).
+			error = 'login failed. check credentials or connection.';
 		}
 		loading = false;
 	}

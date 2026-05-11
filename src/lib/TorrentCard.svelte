@@ -116,52 +116,20 @@
 		</div>
 	</div>
 
-	<!-- stats row -->
-	<div class="flex flex-wrap gap-x-4 gap-y-1 text-xs" style="font-variant-numeric: tabular-nums;">
-		<span>{formatBytes(torrent.downloaded)} / {formatBytes(torrent.size)}</span>
-		{#if torrent.dlspeed > 0}
-			<span style="color: var(--color-accent-blue);">↓ {formatBytes(torrent.dlspeed)}/s</span>
-		{/if}
-		{#if torrent.upspeed > 0}
-			<span style="color: var(--color-success);">↑ {formatBytes(torrent.upspeed)}/s</span>
-		{/if}
-		<span>eta: {formatETA(torrent.eta)}</span>
-		<span>ratio: {(torrent.ratio ?? 0).toFixed(2)}</span>
-		{#if torrent.num_seeds !== undefined}
-			<span style="color: var(--color-success);">s: {torrent.num_seeds}</span>
-		{/if}
-		{#if torrent.num_leechs !== undefined}
-			<span style="color: var(--color-danger);">l: {torrent.num_leechs}</span>
-		{/if}
-	</div>
-
-	<!-- hover actions -->
-	{#if showActions}
-		<div class="absolute top-3 right-3 flex gap-1">
-			<button
-				onclick={togglePause}
-				class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
-				style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary);"
-				aria-label={torrent.state.includes('paused') ? 'resume' : 'pause'}
-			>
-				{torrent.state.includes('paused') ? '▶' : '⏸'}
-			</button>
-			<button
-				onclick={recheck}
-				class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
-				style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary);"
-				aria-label="recheck"
-			>
-				↻
-			</button>
-			<button
-				onclick={() => deleteTorrent(false)}
-				class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
-				style="background: var(--color-bg-dark); border-color: var(--color-danger); border-radius: 6px; color: var(--color-danger);"
-				aria-label="delete"
-			>
-				✕
-			</button>
-		</div>
-	{/if}
-</div>
+	<!-- stats row + hover actions aligned under the status pill -->
+	<div class="flex items-start justify-between gap-3">
+		<div class="flex flex-wrap gap-x-4 gap-y-1 text-xs" style="font-variant-numeric: tabular-nums;">
+			<span>{formatBytes(torrent.downloaded)} / {formatBytes(torrent.size)}</span>
+			{#if torrent.dlspeed > 0}
+				<span style="color: var(--color-accent-blue);">↓ {formatBytes(torrent.dlspeed)}/s</span>
+			{/if}
+			{#if torrent.upspeed > 0}
+				<span style="color: var(--color-success);">↑ {formatBytes(torrent.upspeed)}/s</span>
+			{/if}
+			<span>eta: {formatETA(torrent.eta)}</span>
+			<span>ratio: {(torrent.ratio ?? 0).toFixed(2)}</span>
+			{#if torrent.num_seeds !== undefined}
+				<span style="color: var(--color-success);">s: {torrent.num_seeds}</span>
+			{/if}
+			{#if torrent.num_leechs !== undefined}
+				<span style="color: var(--color-danger);">l: {torrent.num_leechs}</span>

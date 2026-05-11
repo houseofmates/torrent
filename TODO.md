@@ -1,5 +1,5 @@
-- [ ] Inspect Dashboard loading timeout (verify present)
+- [x] Inspect Dashboard loading timeout (verify present)
 - [x] Inspect stores polling/maindata error handling (already updates maindata on error)
-- [ ] Fix navigation not working by switching nav links to SvelteKit `goto`
+- [x] Fix navigation not working by switching nav links to SvelteKit `goto`
 - [ ] Verify proxy endpoint works by checking api call paths
 - [ ] Re-test: dashboard loads with data or error within 8s; click “search” navigates; search page works

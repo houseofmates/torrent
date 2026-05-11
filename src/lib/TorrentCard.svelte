@@ -137,19 +137,19 @@
 		</div>
 
 		{#if showActions}
-			<div class="flex gap-1 mt-0.5">
+			<div class="flex gap-1 mt-0 items-start">
 				<button
 					onclick={togglePause}
-					class="p-1.5 text-xs leading-none border transition-all duration-150 active:scale-[0.98]"
-					style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary);"
+					class="p-1 text-xs leading-none border transition-all duration-150 active:scale-[0.98]"
+					style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary); height: 24px; min-height: 24px;"
 					aria-label={torrent.state.includes('paused') ? 'resume' : 'pause'}
 				>
 					{torrent.state.includes('paused') ? '▶' : '⏸'}
 				</button>
 				<button
 					onclick={recheck}
-					class="p-1.5 text-xs leading-none border transition-all duration-150 active:scale-[0.98]"
-					style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary);"
+					class="p-1 text-xs leading-none border transition-all duration-150 active:scale-[0.98]"
+					style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary); height: 24px; min-height: 24px;"
 					aria-label="recheck"
 				>
 					↻

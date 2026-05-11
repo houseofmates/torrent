@@ -81,6 +81,8 @@ async function pollMaindata() {
 		if (get(isAuthenticated)) {
 			addToast('connection lost. retrying...', 'error');
 		}
+		// always update maindata so the loading state can resolve
+		maindata.update((md) => md);
 	} finally {
 		polling = false;
 	}

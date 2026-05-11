@@ -108,7 +108,6 @@ export async function doLogin(username: string, password: string): Promise<boole
 			isAuthenticated.set(true);
 			lastRid = 0;
 			startPolling();
-			// fetch categories and preferences in background
 			api.getCategories()
 				.then((cats) => categories.set(cats))
 				.catch(() => {});
@@ -119,8 +118,6 @@ export async function doLogin(username: string, password: string): Promise<boole
 				.then((plugins) => searchPlugins.set(plugins))
 				.catch(() => {});
 			addToast('connected', 'success');
-		} else {
-			addToast('login failed. check credentials.', 'error');
 		}
 		return ok;
 	} catch {

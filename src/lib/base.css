@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+@import 'tailwindcss' layer(base);
+
+@theme {
+  --color-bg-primary: #050505;
+  --color-bg-dark: #000000;
+  --color-accent-yellow: #f6b012;
+  --color-accent-blue: #3c9fdd;
+  --color-text-primary: #ffffff;
+  --color-text-accent: #f6b012;
+  --color-text-info: #3c9fdd;
+  --color-border-subtle: #1a1a1a;
+  --color-border-medium: #2a2a2a;
+  --color-surface-card: #0a0a0a;
+  --color-surface-input: #0d0d0d;
+  --color-danger: #dc2626;
+  --font-family-sans: 'Varela Round', sans-serif;
+}
+
+* {
+  text-transform: lowercase;
+}
+
+html, body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--color-accent-yellow);
+  color: var(--color-bg-primary);
+}
+
+input::placeholder {
+  color: color-mix(in srgb, var(--color-text-primary) 30%, transparent);
+  opacity: 1;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 2px;
+}

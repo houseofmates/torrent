@@ -5,6 +5,7 @@
 	import ContextMenu, { type ContextMenuItem } from '$lib/ContextMenu.svelte';
 	import type { Torrent } from './types';
 	import { onMount, onDestroy } from 'svelte';
+	import { page } from '$app/state';
 
 	type SortField = 'name' | 'progress' | 'size' | 'dlspeed' | 'upspeed' | 'eta' | 'ratio' | 'state';
 	type SortDirection = 'asc' | 'desc';
@@ -131,8 +132,30 @@
 		};
 	}
 
-	onMount(() => { startPolling(2000); });
-	onDestroy(() => { stopPolling(); });
+	$effect(() => {
+		// If SvelteKit keeps this component mounted across navigation,
+		// ensure we re-enter a known-good loading state when returning to the dashboard.
+		if ($page.url.pathname === '/') {
+			loading = true;
+			error = '';
+			hasLoadedOnce = false;
+
+			if (loadTimer) {
+				clearTimeout(loadTimer);
+				loadTimer = null;
+			}
+
+			startPolling(2000);
+		}
+	});
+
+	onMount(() => {
+		startPolling(2000);
+	});
+
+	onDestroy(() => {
+		stopPolling();
+	});
 </script>
 
 <AddTorrentModal />

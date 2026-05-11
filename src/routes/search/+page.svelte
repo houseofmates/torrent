@@ -17,7 +17,6 @@
 	let totalResults = $state(0);
 	let downloading = $state<Record<string, boolean>>({});
 
-	let $searchPlugins = $state($searchPlugins);
 	let plugins = $derived($searchPlugins || []);
 
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -55,7 +54,6 @@
 					return;
 				}
 
-				// continue polling
 				setTimeout(poll, 1000);
 			} catch {
 				searchStatus = 'idle';
@@ -131,9 +129,8 @@
 					bind:value={selectedPlugin}
 					class="px-3 py-3 border text-sm"
 					style="background: var(--color-surface-input); border-color: var(--color-border-subtle); border-radius: 8px; color: var(--color-text-primary);"
-					onchange={startSearch}
 				>
-					<option value="all">all</option>
+					<option value="all">all plugins</option>
 					{#each plugins as plugin}
 						<option value={plugin.name}>{plugin.name}</option>
 					{/each}

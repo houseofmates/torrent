@@ -125,11 +125,27 @@ async function proxyRequest(
 	}
 }
 
-export async function GET({ request, params, url }) {
+export async function GET({
+	request,
+	params,
+	url
+}: {
+	request: Request;
+	params: { slug: string };
+	url: URL;
+}) {
 	return proxyRequest(request, 'GET', params, url);
 }
 
-export async function POST({ request, params, url }) {
+export async function POST({
+	request,
+	params,
+	url
+}: {
+	request: Request;
+	params: { slug: string };
+	url: URL;
+}) {
 	const body = await request.text();
 	return proxyRequest(request, 'POST', params, url, body);
 }

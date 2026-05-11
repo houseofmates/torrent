@@ -19,7 +19,21 @@
 	let loading = $state(true);
 	let error = $state('');
 	let hasLoadedOnce = $state(false);
-	let loadTimeout: ReturnType<typeof setTimeout> | null = null;
+
+	// force-loading fallback: if no data after 8s, show error state
+	let loadTimer = $state<ReturnType<typeof setTimeout> | null>(null);
+
+	$effect(() => {
+		if (loading && !loadTimer) {
+			loadTimer = setTimeout(() => {
+				if (loading) {
+					error = 'cannot reach qbittorrent.';
+					loading = false;
+				}
+			}, 8000);
+		}
+		return () => { if (loadTimer) clearTimeout(loadTimer); };
+	});
 
 	$effect(() => {
 		const md = $maindata as any;
@@ -31,19 +45,7 @@
 				hasLoadedOnce = true;
 			}
 			error = '';
-			if (loadTimeout) { clearTimeout(loadTimeout); loadTimeout = null; }
-		}
-	});
-
-	// force-loading fallback: if no data after 8s, show error state
-	$effect(() => {
-		if (loading && !loadTimeout) {
-			loadTimeout = setTimeout(() => {
-				if (loading) {
-					error = 'cannot reach qbittorrent.';
-					loading = false;
-				}
-			}, 8000);
+			if (loadTimer) { clearTimeout(loadTimer); loadTimer = null; }
 		}
 	});
 

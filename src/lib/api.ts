@@ -201,7 +201,8 @@ export async function searchStart(
 	plugins = 'all',
 	category = 'all'
 ): Promise<number> {
-	const data = await get('search/start', { pattern, plugins, category }) as { id: number };
+	const res = await post('search/start', new URLSearchParams({ pattern, plugins, category }));
+	const data = await res.json() as { id: number };
 	return data.id;
 }
 
@@ -213,9 +214,13 @@ export async function searchResults(id: number, limit?: number, offset?: number)
 }
 
 export async function searchStop(id: number): Promise<void> {
-	await get('search/stop', { id: String(id) });
+	await post('search/stop', new URLSearchParams({ id: String(id) }));
 }
 
 export async function searchDelete(id: number): Promise<void> {
-	await get('search/delete', { id: String(id) });
+	await post('search/delete', new URLSearchParams({ id: String(id) }));
+}
+
+export async function getTorrentPeers(hash: string, rid?: number): Promise<TorrentPeers> {
+	return get('torrents/peers', { hash, ...(rid ? { rid: String(rid) } : {}) });
 }

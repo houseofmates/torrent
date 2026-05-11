@@ -11,21 +11,46 @@
 
 	let query = $state('');
 	let selectedPlugin = $state('all');
+	let selectedCategory = $state('all');
 	let results = $state<SearchResult[]>([]);
 	let searchStatus = $state<'idle' | 'searching' | 'done'>('idle');
 	let searchId = $state<number | null>(null);
 	let totalResults = $state(0);
 	let downloading = $state<Record<string, boolean>>({});
+	let sortField = $state<'seeds' | 'size' | 'name'>('seeds');
+	let sortReverse = $state(true);
 
 	let plugins = $derived($searchPlugins || []);
+	let pluginCategories = $derived.by(() => {
+		const cats = new Set<string>();
+		($searchPlugins || []).forEach((p) => {
+			(p.supported_categories || []).forEach((c) => cats.add(c));
+		});
+		return ['all', ...Array.from(cats)];
+	});
 
+	let sortedResults = $derived.by(() => {
+		const sorted = [...results];
+		sorted.sort((a, b) => {
+			let cmp = 0;
+			if (sortField === 'seeds') cmp = (a.nbSeeders || 0) - (b.nbSeeders || 0);
+			else if (sortField === 'size') cmp = (a.fileSize || 0) - (b.fileSize || 0);
+			else cmp = (a.fileName || '').localeCompare(b.fileName || '');
+			return sortReverse ? -cmp : cmp;
+		});
+		return sorted;
+	});
+
+	let pollTimeout: ReturnType<typeof setTimeout> | null = null;
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 	async function startSearch() {
-		if (!query.trim() || searchStatus === 'searching') return;
+		if (!query.trim()) return;
+		if (debounceTimer) clearTimeout(debounceTimer);
 
 		if (searchId !== null) {
 			await doSearchStop(searchId);
+			if (pollTimeout) clearTimeout(pollTimeout);
 		}
 
 		searchStatus = 'searching';
@@ -33,7 +58,7 @@
 		totalResults = 0;
 
 		try {
-			const id = await doSearchStart(query.trim(), selectedPlugin);
+			const id = await doSearchStart(query.trim(), selectedPlugin, selectedCategory);
 			searchId = id;
 			pollResults(id);
 		} catch {
@@ -41,8 +66,9 @@
 		}
 	}
 
-	async function pollResults(id: number) {
-		const poll = async () => {
+	function pollResults(id: number) {
+		if (pollTimeout) clearTimeout(pollTimeout);
+		pollTimeout = setTimeout(async () => {
 			try {
 				const data = await doSearchResults(id);
 				results = data.results || [];
@@ -51,27 +77,27 @@
 				if (data.status === 'Stopped') {
 					searchStatus = 'done';
 					searchId = null;
+					pollTimeout = null;
 					return;
 				}
 
-				setTimeout(poll, 1000);
+				pollResults(id);
 			} catch {
 				searchStatus = 'idle';
 				searchId = null;
+				pollTimeout = null;
 			}
-		};
-
-		setTimeout(poll, 1000);
+		}, 1000);
 	}
 
-	function onInput() {
+	function handleInput() {
 		if (debounceTimer) clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(() => {
-			startSearch();
+			if (query.trim()) startSearch();
 		}, 400);
 	}
 
-	function onKeydown(e: KeyboardEvent) {
+	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter') {
 			if (debounceTimer) clearTimeout(debounceTimer);
 			startSearch();
@@ -79,15 +105,16 @@
 	}
 
 	async function download(result: SearchResult) {
-		if (!result.fileUrl && !result.descrLink) return;
+		const url = result.fileUrl || result.descrLink;
+		if (!url) return;
 		const key = result.fileName;
 		downloading = { ...downloading, [key]: true };
 
 		try {
-			const url = result.fileUrl || result.descrLink || '';
 			await doAddTorrent(url);
-			downloading = { ...downloading, [key]: false };
 		} catch {
+			// toast shown by store
+		} finally {
 			downloading = { ...downloading, [key]: false };
 		}
 	}
@@ -102,48 +129,76 @@
 	function stopSearch() {
 		if (searchId !== null) {
 			doSearchStop(searchId);
+			if (pollTimeout) clearTimeout(pollTimeout);
 			searchStatus = 'done';
 			searchId = null;
 		}
 	}
+
+	function toggleSort(field: 'seeds' | 'size' | 'name') {
+		if (sortField === field) {
+			sortReverse = !sortReverse;
+		} else {
+			sortField = field;
+			sortReverse = field === 'seeds';
+		}
+	}
 </script>
 
-<div class="px-4 sm:px-6 py-4" style="max-width: 1200px; margin: 0 auto;">
+<div class="px-4 sm:px-6 py-4 pb-24 sm:pb-6" style="max-width: 1200px; margin: 0 auto;">
 	<!-- search bar -->
-	<div class="flex flex-col sm:flex-row gap-3 mb-6">
-		<div class="flex-1">
-			<input
-				type="text"
-				bind:value={query}
-				oninput={onInput}
-				onkeydown={onKeydown}
-				class="w-full px-4 py-3 border text-sm"
-				style="background: var(--color-surface-input); border-color: var(--color-border-subtle); border-radius: 8px; color: var(--color-text-primary);"
-				placeholder="search for torrents..."
-				aria-label="search torrents"
-			/>
-		</div>
-		<div class="flex gap-2">
-			{#if plugins.length > 0}
-				<select
-					bind:value={selectedPlugin}
-					class="px-3 py-3 border text-sm"
-					style="background: var(--color-surface-input); border-color: var(--color-border-subtle); border-radius: 8px; color: var(--color-text-primary);"
-				>
-					<option value="all">all plugins</option>
-					{#each plugins as plugin}
-						<option value={plugin.name}>{plugin.name}</option>
-					{/each}
-				</select>
-			{/if}
-			<button
-				onclick={startSearch}
-				disabled={searchStatus === 'searching' || !query.trim()}
-				class="px-4 py-3 text-sm font-bold border disabled:opacity-40 transition-all duration-150 active:scale-[0.98]"
-				style="background: var(--color-accent-blue); border-color: var(--color-accent-blue); border-radius: 8px; color: #050505;"
+	<div class="mb-4">
+		<input
+			type="text"
+			bind:value={query}
+			oninput={handleInput}
+			onkeydown={handleKeydown}
+			class="w-full px-4 py-3 border text-sm"
+			style="background: var(--color-surface-input); border-color: var(--color-border-subtle); border-radius: 8px; color: var(--color-text-primary);"
+			placeholder="search for torrents..."
+			aria-label="search torrents"
+		/>
+	</div>
+
+	<!-- filter row -->
+	<div class="flex flex-wrap gap-2 mb-4">
+		{#if plugins.length > 0}
+			<select
+				bind:value={selectedPlugin}
+				class="px-3 py-2 border text-xs"
+				style="background: var(--color-surface-input); border-color: var(--color-border-subtle); border-radius: 6px; color: var(--color-text-primary);"
+				onchange={() => { if (query.trim()) startSearch(); }}
 			>
-				{searchStatus === 'searching' ? 'searching...' : 'search'}
-			</button>
+				<option value="all">all plugins</option>
+				{#each plugins as plugin}
+					<option value={plugin.name}>{plugin.name}</option>
+				{/each}
+			</select>
+		{/if}
+
+		{#if pluginCategories.length > 1}
+			<select
+				bind:value={selectedCategory}
+				class="px-3 py-2 border text-xs"
+				style="background: var(--color-surface-input); border-color: var(--color-border-subtle); border-radius: 6px; color: var(--color-text-primary);"
+				onchange={() => { if (query.trim()) startSearch(); }}
+			>
+				{#each pluginCategories as cat}
+					<option value={cat}>{cat}</option>
+				{/each}
+			</select>
+		{/if}
+
+		<div class="flex gap-1 ml-auto">
+			{#each ['seeds', 'size', 'name'] as field}
+				<button
+					class="px-3 py-2 text-xs border transition-all duration-150 active:scale-[0.98]"
+					style="background: {sortField === field ? 'var(--color-accent-blue)' : 'var(--color-surface-input)'}; border-color: {sortField === field ? 'var(--color-accent-blue)' : 'var(--color-border-subtle)'}; border-radius: 6px; color: {sortField === field ? '#050505' : 'var(--color-text-primary)'};"
+					onclick={() => toggleSort(field as 'seeds' | 'size' | 'name')}
+				>
+					{field}{sortField === field ? (sortReverse ? ' ↓' : ' ↑') : ''}
+				</button>
+			{/each}
 		</div>
 	</div>
 
@@ -179,9 +234,9 @@
 	{/if}
 
 	<!-- results -->
-	{#if results.length > 0}
+	{#if sortedResults.length > 0}
 		<div class="flex flex-col gap-3" role="list">
-			{#each results as result (result.fileName)}
+			{#each sortedResults as result (result.fileName + result.fileSize + result.siteUrl)}
 				<div role="listitem" class="border p-4 transition-colors duration-150" style="border-color: var(--color-border-subtle); background: var(--color-surface-card); border-radius: 10px;">
 					<div class="flex items-start justify-between gap-3">
 						<div class="flex-1 min-w-0">
@@ -197,7 +252,7 @@
 							onclick={() => download(result)}
 							disabled={downloading[result.fileName]}
 							class="px-3 py-2 text-xs font-bold border whitespace-nowrap disabled:opacity-40 transition-all duration-150 active:scale-[0.98] flex-shrink-0"
-							style="border-color: var(--color-accent-blue); color: {downloading[result.fileName] ? 'var(--color-text-info)' : 'var(--color-accent-blue)'}; border-radius: 6px; background: {downloading[result.fileName] ? 'transparent' : 'var(--color-accent-blue)'};"
+							style="background: {downloading[result.fileName] ? 'transparent' : 'var(--color-accent-blue)'}; border-color: var(--color-accent-blue); border-radius: 6px; color: {downloading[result.fileName] ? 'var(--color-text-info)' : '#050505'};"
 						>
 							{downloading[result.fileName] ? 'adding...' : 'download'}
 						</button>
@@ -207,14 +262,14 @@
 		</div>
 	{/if}
 
-	<!-- empty state -->
+	<!-- empty states -->
 	{#if searchStatus === 'idle' && results.length === 0}
 		<div class="text-center py-16">
 			<p class="text-sm mb-1" style="color: var(--color-accent-yellow);">search for torrents</p>
 			<p class="text-xs" style="color: var(--color-text-info);">type above to search across all enabled plugins.</p>
 		</div>
 	{/if}
-	{#if searchStatus === 'done' && results.length === 0}
+	{#if searchStatus === 'done' && sortedResults.length === 0}
 		<div class="text-center py-16">
 			<p class="text-sm mb-1" style="color: var(--color-accent-yellow);">no results</p>
 			<p class="text-xs" style="color: var(--color-text-info);">try a different query or plugin.</p>

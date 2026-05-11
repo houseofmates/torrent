@@ -180,7 +180,7 @@ export async function getTorrentProperties(hash: string): Promise<Record<string,
 }
 
 export async function getTorrentPeers(hash: string, rid?: number): Promise<TorrentPeers> {
-	return get('torrents/trackers', { hash, ...(rid ? { rid: String(rid) } : {}) });
+	return get('torrents/peers', { hash, ...(rid ? { rid: String(rid) } : {}) });
 }
 
 export async function getTorrentTrackers(hash: string): Promise<unknown[]> {
@@ -219,8 +219,4 @@ export async function searchStop(id: number): Promise<void> {
 
 export async function searchDelete(id: number): Promise<void> {
 	await post('search/delete', new URLSearchParams({ id: String(id) }));
-}
-
-export async function getTorrentPeers(hash: string, rid?: number): Promise<TorrentPeers> {
-	return get('torrents/peers', { hash, ...(rid ? { rid: String(rid) } : {}) });
 }

@@ -156,8 +156,8 @@
 				</button>
 				<button
 					onclick={() => deleteTorrent(false)}
-					class="p-1.5 text-xs leading-none border transition-all duration-150 active:scale-[0.98]"
-					style="background: var(--color-bg-dark); border-color: var(--color-danger); border-radius: 6px; color: var(--color-danger);"
+					class="p-1 text-xs leading-none border transition-all duration-150 active:scale-[0.98]"
+					style="background: var(--color-bg-dark); border-color: var(--color-danger); border-radius: 6px; color: var(--color-danger); height: 24px; min-height: 24px;"
 					aria-label="delete"
 				>
 					✕

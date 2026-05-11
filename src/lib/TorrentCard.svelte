@@ -137,10 +137,10 @@
 		</div>
 
 		{#if showActions}
-			<div class="flex gap-1 mt-1">
+			<div class="flex gap-1 mt-0.5">
 				<button
 					onclick={togglePause}
-					class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
+					class="p-1.5 text-xs leading-none border transition-all duration-150 active:scale-[0.98]"
 					style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary);"
 					aria-label={torrent.state.includes('paused') ? 'resume' : 'pause'}
 				>
@@ -148,7 +148,7 @@
 				</button>
 				<button
 					onclick={recheck}
-					class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
+					class="p-1.5 text-xs leading-none border transition-all duration-150 active:scale-[0.98]"
 					style="background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 6px; color: var(--color-text-primary);"
 					aria-label="recheck"
 				>
@@ -156,7 +156,7 @@
 				</button>
 				<button
 					onclick={() => deleteTorrent(false)}
-					class="p-2 text-xs border transition-all duration-150 active:scale-[0.98]"
+					class="p-1.5 text-xs leading-none border transition-all duration-150 active:scale-[0.98]"
 					style="background: var(--color-bg-dark); border-color: var(--color-danger); border-radius: 6px; color: var(--color-danger);"
 					aria-label="delete"
 				>

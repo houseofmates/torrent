@@ -1,106 +1,149 @@
 <script lang="ts">
-	import { addToast } from './stores';
+	import { modal, doAddTorrent, categories, preferences, addToast } from '$lib/stores';
+	import { onDestroy } from 'svelte';
 
-	interface Props {
-		open: boolean;
-		onclose?: () => void;
-	}
-
-	let { open = $bindable(false), onclose }: Props = $props();
-
+	let $modal = $state($modal);
+	let show = $derived($modal?.type === 'add');
 	let input = $state('');
 	let savePath = $state('');
+	let selectedCategory = $state('');
 	let loading = $state(false);
 	let error = $state('');
+	let selectedFiles = $state<File[]>([]);
+	let fileInput: HTMLInputElement | null = $state(null);
+
+	let $categories = $state($categories);
+	let categoryList = $derived(Object.entries($categories || {}));
+
+	let $preferences = $state($preferences);
+
+	$effect(() => {
+		if (show && $preferences?.save_path) {
+			savePath = $preferences.save_path;
+		}
+	});
 
 	function dismiss() {
-		open = false;
-		onclose?.();
+		modal.set({ type: null });
+		input = '';
+		savePath = '';
+		selectedCategory = '';
+		selectedFiles = [];
+		error = '';
+		loading = false;
+		if (fileInput) fileInput.value = '';
 	}
 
-	async function addTorrent() {
-		const trimmed = input.trim();
-		if (!trimmed) return;
+	async function submit() {
+		const urls = input.trim();
+		if (!urls && selectedFiles.length === 0) {
+			error = 'enter a magnet link, url, or select a torrent file.';
+			return;
+		}
 		loading = true;
 		error = '';
 
 		try {
-			const params = new URLSearchParams();
-			if (trimmed.startsWith('magnet:') || trimmed.startsWith('http')) {
-				params.set('urls', trimmed);
-			}
-			if (savePath) params.set('savepath', savePath);
-			if (!params.has('urls') && !params.has('torrents')) {
-				error = 'must be a magnet link or url.';
-				loading = false;
-				return;
-			}
-
-			const res = await fetch('/api/torrents/add', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				body: params
-			});
-
-			if (res.ok) {
-				addToast('torrent added', 'success');
-				input = '';
-				savePath = '';
-				dismiss();
-			} else {
-				const text = await res.text();
-				error = text || 'failed to add torrent.';
-			}
+			await doAddTorrent(
+				urls || undefined,
+				savePath || undefined,
+				selectedCategory || undefined,
+				selectedFiles.length > 0 ? selectedFiles : undefined
+			);
+			dismiss();
 		} catch {
-			error = 'connection failed.';
+			error = 'failed to add torrent.';
 		} finally {
 			loading = false;
+		}
+	}
+
+	function handleFileChange(e: Event) {
+		const target = e.target as HTMLInputElement;
+		if (target.files) {
+			selectedFiles = Array.from(target.files);
 		}
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') dismiss();
 	}
+
+	$effect(() => {
+		if (show) {
+			window.addEventListener('keydown', handleKeydown);
+		}
+		return () => {
+			window.removeEventListener('keydown', handleKeydown);
+		};
+	});
 </script>
 
-<svelte:window onkeydown={open ? handleKeydown : undefined} />
-
-{#if open}
+{#if show}
 	<!-- backdrop -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<button
-		class="fixed inset-0 z-40 cursor-default"
-		style="background: rgba(0,0,0,0.7);"
+	<div
+		class="fixed inset-0 z-40"
+		style="background: var(--color-bg-dark);"
 		onclick={dismiss}
 		aria-label="close modal"
-	></button>
+	></div>
 	<!-- panel -->
 	<div class="fixed inset-0 z-50 flex items-center justify-center p-4" style="pointer-events: none;">
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
-			class="w-full max-w-lg p-6 border border-border-medium"
-			style="background: var(--color-surface-card); border-radius: 12px; pointer-events: auto; animation: modalIn 200ms ease-out;"
+			class="w-full max-w-lg p-6 border"
+			style="background: var(--color-surface-card); border-color: var(--color-border-medium); border-radius: 12px; pointer-events: auto; animation: modal-in 200ms ease-out;"
 		>
 			<h2 class="text-lg mb-4" style="color: var(--color-accent-yellow);">add torrent</h2>
 
-			<label for="torrent-input" class="block text-sm mb-1 text-white">magnet link or url</label>
+			<label for="torrent-input" class="block text-sm mb-1" style="color: var(--color-text-info);">magnet link or url</label>
 			<textarea
 				id="torrent-input"
 				bind:value={input}
 				rows="3"
-				class="w-full p-3 border border-border-medium text-sm mb-4 resize-none"
-				style="background: var(--color-surface-input); border-radius: 8px;"
+				class="w-full p-3 border text-sm mb-4 resize-none"
+				style="background: var(--color-surface-input); border-color: var(--color-border-medium); border-radius: 8px; color: var(--color-text-primary);"
 				placeholder="magnet:?xt=urn:btih:..."
 			></textarea>
 
-			<label for="save-path" class="block text-sm mb-1 text-white">save to (optional)</label>
+			<label for="file-input" class="block text-sm mb-1" style="color: var(--color-text-info);">or select .torrent file</label>
+			<input
+				id="file-input"
+				type="file"
+				bind:this={fileInput}
+				onchange={handleFileChange}
+				accept=".torrent"
+				class="w-full p-3 border text-sm mb-4"
+				style="background: var(--color-surface-input); border-color: var(--color-border-medium); border-radius: 8px; color: var(--color-text-primary);"
+			/>
+			{#if selectedFiles.length > 0}
+				<p class="text-xs mb-4" style="color: var(--color-success);">{selectedFiles.length} file(s) selected</p>
+			{/if}
+
+			<label for="save-path" class="block text-sm mb-1" style="color: var(--color-text-info);">save to (optional)</label>
 			<input
 				id="save-path"
 				type="text"
 				bind:value={savePath}
-				class="w-full p-3 border border-border-medium text-sm mb-4"
-				style="background: var(--color-surface-input); border-radius: 8px;"
+				class="w-full p-3 border text-sm mb-4"
+				style="background: var(--color-surface-input); border-color: var(--color-border-medium); border-radius: 8px; color: var(--color-text-primary);"
 			/>
+
+			{#if categoryList.length > 0}
+				<label for="category" class="block text-sm mb-1" style="color: var(--color-text-info);">category (optional)</label>
+				<select
+					id="category"
+					bind:value={selectedCategory}
+					class="w-full p-3 border text-sm mb-4"
+					style="background: var(--color-surface-input); border-color: var(--color-border-medium); border-radius: 8px; color: var(--color-text-primary);"
+				>
+					<option value="">none</option>
+					{#each categoryList as [key, _]}
+						<option value={key}>{key}</option>
+					{/each}
+				</select>
+			{/if}
 
 			{#if error}
 				<p class="text-sm mb-4" style="color: var(--color-danger);">{error}</p>
@@ -109,25 +152,18 @@
 			<div class="flex justify-end gap-3">
 				<button
 					onclick={dismiss}
-					class="px-4 py-2 text-sm border border-border-medium transition-all duration-150 active:scale-95"
-					style="border-radius: 8px; color: #fff;"
+					class="px-4 py-2 text-sm border transition-all duration-150 active:scale-[0.98]"
+					style="border-color: var(--color-border-medium); border-radius: 8px; color: var(--color-text-primary);"
 				>cancel</button>
 				<button
-					onclick={addTorrent}
-					disabled={loading || !input.trim()}
+					onclick={submit}
+					disabled={loading || (!input.trim() && selectedFiles.length === 0)}
 					class="px-4 py-2 text-sm font-bold disabled:opacity-40 transition-all duration-150 active:scale-[0.98]"
-					style="background: var(--color-accent-blue); border-radius: 8px; color: #fff;"
+					style="background: var(--color-accent-blue); border-radius: 8px; color: #050505;"
 				>
 					{loading ? 'adding...' : 'add'}
 				</button>
 			</div>
 		</div>
 	</div>
-
-	<style>
-		@keyframes modalIn {
-			from { opacity: 0; transform: translateY(-8px) scale(0.98); }
-			to { opacity: 1; transform: translateY(0) scale(1); }
-		}
-	</style>
 {/if}

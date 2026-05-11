@@ -2,6 +2,7 @@
 	import '$lib/base.css';
 	import Toast from '$lib/Toast.svelte';
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	import { isAuthenticated, doLogout } from '$lib/stores';
 
 	let { children } = $props();
@@ -10,6 +11,10 @@
 		{ href: '/', label: 'torrents', icon: '◉' },
 		{ href: '/search', label: 'search', icon: '◎' }
 	];
+
+	function navTo(href: string) {
+		goto(href);
+	}
 </script>
 
 <div class="min-h-[100dvh]" style="background: var(--color-bg-primary);">
@@ -21,6 +26,10 @@
 				{#each navItems as item}
 					<a
 						href={item.href}
+						onclick={(e) => {
+							e.preventDefault();
+							navTo(item.href);
+						}}
 						class="px-3 py-1.5 text-sm rounded-md transition-all duration-150 active:scale-[0.98] no-underline"
 						style="color: {page.url.pathname === item.href ? 'var(--color-accent-yellow)' : 'var(--color-text-info)'}; background: {page.url.pathname === item.href ? 'var(--color-surface-card)' : 'transparent'};"
 					>{item.label}</a>

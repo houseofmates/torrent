@@ -342,7 +342,7 @@
 		{:else}
 			<div class="flex flex-col gap-3">
 				{#each filteredTorrents as torrent (torrent.hash)}
-					<div oncontextmenu={(e) => handleContextMenu(e, torrent)}>
+					<div role="listitem" oncontextmenu={(e) => handleContextMenu(e, torrent)}>
 						<TorrentCard {torrent} />
 					</div>
 				{/each}

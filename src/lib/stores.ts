@@ -6,6 +6,7 @@ import type {
 	Category,
 	SearchPlugin,
 	SearchResult,
+	SearchResults,
 	TorrentPreferences
 } from './types';
 

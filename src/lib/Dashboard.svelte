@@ -5,7 +5,7 @@
 	import ContextMenu, { type ContextMenuItem } from '$lib/ContextMenu.svelte';
 	import type { Torrent } from './types';
 	import { onMount, onDestroy } from 'svelte';
-	import { page } from '$app/state';
+	import { afterNavigate } from '$app/navigation';
 
 	type SortField = 'name' | 'progress' | 'size' | 'dlspeed' | 'upspeed' | 'eta' | 'ratio' | 'state';
 	type SortDirection = 'asc' | 'desc';
@@ -132,10 +132,11 @@
 		};
 	}
 
-	$effect(() => {
+	afterNavigate(() => {
 		// If SvelteKit keeps this component mounted across navigation,
 		// ensure we re-enter a known-good loading state when returning to the dashboard.
-		if ($page.url.pathname === '/') {
+		const pathname = window.location.pathname;
+		if (pathname === '/') {
 			loading = true;
 			error = '';
 			hasLoadedOnce = false;
@@ -228,7 +229,7 @@
 		</div>
 	{:else}
 		<div class="flex flex-col gap-3" role="list">
-			{#each filteredTorrents as torrent (torrent.hash)}
+			{#each filteredTorrents as torrent, i (torrent.hash || torrent.name || i)}
 				<div role="listitem"
 					oncontextmenu={(e) => handleContextMenuSafe(e, torrent)}
 					ontouchstart={(e) => handleTouchStart(e, torrent)}

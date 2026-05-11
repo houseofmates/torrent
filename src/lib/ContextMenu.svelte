@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	export interface ContextMenuItem {
 		label: string;
 		action: () => void;
@@ -23,21 +21,24 @@
 		action();
 	}
 
-	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape') onclose();
-	}
-
-	onMount(() => {
-		window.addEventListener('keydown', handleKeydown);
-		window.addEventListener('click', onclose);
-		return () => {
-			window.removeEventListener('keydown', handleKeydown);
-			window.removeEventListener('click', onclose);
-		};
-	});
-
 	let adjustedX = $derived(x + 200 > window.innerWidth ? window.innerWidth - 200 : x);
 	let adjustedY = $derived(y + items.length * 40 > window.innerHeight ? window.innerHeight - (items.length * 40) : y);
+
+	$effect(() => {
+		function handleKeydown(e: KeyboardEvent) {
+			if (e.key === 'Escape') onclose();
+		}
+		window.addEventListener('keydown', handleKeydown);
+		return () => window.removeEventListener('keydown', handleKeydown);
+	});
+
+	$effect(() => {
+		function handleClickOutside(e: MouseEvent) {
+			onclose();
+		}
+		window.addEventListener('click', handleClickOutside);
+		return () => window.removeEventListener('click', handleClickOutside);
+	});
 </script>
 
 <div

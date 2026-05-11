@@ -249,7 +249,7 @@ export async function doSearchStart(
 	}
 }
 
-export async function doSearchResults(id: number): Promise<api.searchResults> {
+export async function doSearchResults(id: number): Promise<SearchResults> {
 	return api.searchResults(id);
 }
 

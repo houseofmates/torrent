@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isAuthenticated, startPolling, doLogout } from '$lib/stores';
+	import { isAuthenticated, doLogout } from '$lib/stores';
 	import Login from '$lib/Login.svelte';
 	import Dashboard from '$lib/Dashboard.svelte';
 	import { onMount } from 'svelte';
@@ -8,10 +8,9 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch('/api/sync/maindata');
+			const res = await fetch('/api/v2/sync/maindata');
 			if (res.ok) {
 				isAuthenticated.set(true);
-				startPolling();
 			} else if (res.status === 403) {
 				doLogout();
 			}

@@ -20,45 +20,76 @@
 	let error = $state('');
 	let hasLoadedOnce = $state(false);
 
-	let filteredTorrents = $derived.by(() => {
-		const items = $torrents as Torrent[];
-		let result = items.filter((t) =>
-			t.name.toLowerCase().includes(searchQuery.toLowerCase())
-		);
+		let filteredTorrents = $derived.by(() => {
+			const items = $torrents as Torrent[];
+			let result = items.filter((t) =>
+				t.name.toLowerCase().includes(searchQuery.toLowerCase())
+			);
 
-		result.sort((a, b) => {
-			let comparison = 0;
-			switch (sortField) {
-				case 'name':
-					comparison = a.name.localeCompare(b.name);
-					break;
-				case 'progress':
-					comparison = (a.progress || 0) - (b.progress || 0);
-					break;
-				case 'size':
-					comparison = (a.size || 0) - (b.size || 0);
-					break;
-				case 'dlspeed':
-					comparison = (a.dlspeed || 0) - (b.dlspeed || 0);
-					break;
-				case 'upspeed':
-					comparison = (a.upspeed || 0) - (b.upspeed || 0);
-					break;
-				case 'eta':
-					comparison = (a.eta || 0) - (b.eta || 0);
-					break;
-				case 'ratio':
-					comparison = (a.ratio || 0) - (b.ratio || 0);
-					break;
-				case 'state':
-					comparison = (a.state || '').localeCompare(b.state || '');
-					break;
-			}
-			return sortDirection === 'desc' ? -comparison : comparison;
+			result.sort((a, b) => {
+				let comparison = 0;
+				switch (sortField) {
+					case 'name':
+						comparison = a.name.localeCompare(b.name);
+						break;
+					case 'progress':
+						comparison = (a.progress || 0) - (b.progress || 0);
+						break;
+					case 'size':
+						comparison = (a.size || 0) - (b.size || 0);
+						break;
+					case 'dlspeed':
+						comparison = (a.dlspeed || 0) - (b.dlspeed || 0);
+						break;
+					case 'upspeed':
+						comparison = (a.upspeed || 0) - (b.upspeed || 0);
+						break;
+					case 'eta':
+						comparison = (a.eta || 0) - (b.eta || 0);
+						break;
+					case 'ratio':
+						comparison = (a.ratio || 0) - (b.ratio || 0);
+						break;
+					case 'state':
+						comparison = (a.state || '').localeCompare(b.state || '');
+						break;
+				}
+				return sortDirection === 'desc' ? -comparison : comparison;
+			});
+
+			return result;
 		});
 
-		return result;
-	});
+		let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+		let longPressFired = $state(false);
+
+		function handleTouchStart(e: TouchEvent, torrent: Torrent) {
+			longPressFired = false;
+			longPressTimer = setTimeout(() => {
+				longPressFired = true;
+				const touch = e.touches[0];
+				handleContextMenu({
+					preventDefault: () => {},
+					clientX: touch.clientX,
+					clientY: touch.clientY
+				} as MouseEvent, torrent);
+			}, 500);
+		}
+
+		function handleTouchEnd() {
+			if (longPressTimer) {
+				clearTimeout(longPressTimer);
+				longPressTimer = null;
+			}
+		}
+
+		function handleContextMenuSafe(e: MouseEvent, torrent: Torrent) {
+			if (longPressFired) {
+				longPressFired = false;
+				return;
+			}
+			handleContextMenu(e, torrent);
+		}
 
 	let serverState = $derived($maindata as any);
 

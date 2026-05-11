@@ -19,43 +19,33 @@
 	let loading = $state(true);
 	let error = $state('');
 	let hasLoadedOnce = $state(false);
+	let loadTimeout: ReturnType<typeof setTimeout> | null = null;
 
-		let filteredTorrents = $derived.by(() => {
-			const items = $torrents as Torrent[];
-			let result = items.filter((t) =>
-				t.name.toLowerCase().includes(searchQuery.toLowerCase())
-			);
+	$effect(() => {
+		const md = $maindata as any;
+		if (md?.server_state) {
+			uploadSpeed = md.server_state.up_info_speed || 0;
+			downloadSpeed = md.server_state.dl_info_speed || 0;
+			if (!hasLoadedOnce) {
+				loading = false;
+				hasLoadedOnce = true;
+			}
+			error = '';
+			if (loadTimeout) { clearTimeout(loadTimeout); loadTimeout = null; }
+		}
+	});
 
-			result.sort((a, b) => {
-				let comparison = 0;
-				switch (sortField) {
-					case 'name':
-						comparison = a.name.localeCompare(b.name);
-						break;
-					case 'progress':
-						comparison = (a.progress || 0) - (b.progress || 0);
-						break;
-					case 'size':
-						comparison = (a.size || 0) - (b.size || 0);
-						break;
-					case 'dlspeed':
-						comparison = (a.dlspeed || 0) - (b.dlspeed || 0);
-						break;
-					case 'upspeed':
-						comparison = (a.upspeed || 0) - (b.upspeed || 0);
-						break;
-					case 'eta':
-						comparison = (a.eta || 0) - (b.eta || 0);
-						break;
-					case 'ratio':
-						comparison = (a.ratio || 0) - (b.ratio || 0);
-						break;
-					case 'state':
-						comparison = (a.state || '').localeCompare(b.state || '');
-						break;
+	// force-loading fallback: if no data after 8s, show error state
+	$effect(() => {
+		if (loading && !loadTimeout) {
+			loadTimeout = setTimeout(() => {
+				if (loading) {
+					error = 'cannot reach qbittorrent.';
+					loading = false;
 				}
-				return sortDirection === 'desc' ? -comparison : comparison;
-			});
+			}, 8000);
+		}
+	});
 
 			return result;
 		});

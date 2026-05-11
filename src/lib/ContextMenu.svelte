@@ -48,8 +48,9 @@
 <div
 		class="fixed z-[1000] border py-1"
 		style="left: {adjustedX}px; top: {adjustedY}px; background: var(--color-bg-dark); border-color: var(--color-border-medium); border-radius: 8px; min-width: 180px; box-shadow: 0 4px 12px rgba(0,0,0,0.4);"
-		onclick|stopPropagation
-		oncontextmenu|preventDefault|stopPropagation
+		onclick={(e) => e.stopPropagation()}
+		oncontextmenu={(e) => { e.preventDefault(); e.stopPropagation(); }}
+		onkeydown={(e) => { if (e.key === 'Escape') onclose(); }}
 		role="menu"
 		tabindex="-1"
 	>

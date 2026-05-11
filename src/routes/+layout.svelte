@@ -67,6 +67,10 @@
 		{#each navItems as item}
 			<a
 				href={item.href}
+				onclick={(e) => {
+					e.preventDefault();
+					navTo(item.href);
+				}}
 				class="flex-1 flex flex-col items-center justify-center py-3 gap-1 no-underline transition-colors duration-150 active:scale-[0.98]"
 				style="color: {page.url.pathname === item.href ? 'var(--color-accent-yellow)' : 'var(--color-text-info)'};"
 				aria-label={item.label}

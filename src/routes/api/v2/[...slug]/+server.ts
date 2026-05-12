@@ -45,18 +45,14 @@ async function ensureQbitAuthed(): Promise<string | null> {
 		// If it returns 403/failed, we fall through without caching.
 		if (!res.ok) return null;
 
-		const setCookies: string[] = res.headers
-			.getSetCookie?.() ?? [];
-
-		// Fallback if getSetCookie isn't available: iterate all set-cookie headers.
-		if (!setCookies.length) {
-			res.headers.forEach((_, key) => {
-				if (key.toLowerCase() === 'set-cookie') {
-					// This branch isn't reliable to extract value without getSetCookie,
-					// so we just ignore it.
-				}
-			});
-		}
+		// Extract all Set-Cookie header values.
+		// (Node's fetch Headers does not reliably expose getSetCookie; use forEach instead.)
+		const setCookies: string[] = [];
+		res.headers.forEach((value, key) => {
+			if (key.toLowerCase() === 'set-cookie') {
+				setCookies.push(value);
+			}
+		});
 
 		for (const sc of setCookies) {
 			const sid = extractSidCookie(sc);

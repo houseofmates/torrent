@@ -39,6 +39,41 @@
 			uploading: 'uploading',
 			pausedDL: 'paused',
 			pausedUP: 'paused',
+			error: 'error',
+			missingFiles: 'missing files',
+			queuedUP: 'queued',
+			queuedDL: 'queued',
+			stalledUP: 'stalled',
+			stalledDL: 'stalled',
+			metaDL: 'metadata',
+			forcedDL: 'forced',
+			forcedUP: 'forced',
+			allocating: 'allocating',
+			moving: 'moving',
+		};
+		return labels[state] ?? state;
+	}
+
+	function isDownloadLikeState(state: string): boolean {
+		return [
+			'downloading',
+			'pausedDL',
+			'queuedDL',
+			'stalledDL',
+			'forcedDL',
+			'metaDL'
+		].includes(state);
+	}
+
+	function getProgressFillColor(t: Torrent): string {
+		// Use the requested orange for anything that represents download progress
+		if (isDownloadLikeState(t.state)) return '#f6b012';
+
+		// Keep existing colors for seeding/uploading
+		return getStateColor(t.state).bg;
+	}
+
+	function formatBytes(bytes: number): string {
 		if (!bytes || bytes === 0) return '0 b';
 		const units = ['b', 'kb', 'mb', 'gb', 'tb'];
 		const i = Math.floor(Math.log(bytes) / Math.log(1024));
@@ -95,7 +130,7 @@
 		<div class="w-full border" style="border-color: var(--color-border-subtle); border-radius: 9999px; height: 6px; background: var(--color-bg-dark);">
 			<div
 				class="transition-all duration-300"
-				style="height: 100%; width: {progressPct}%; background: {getStateColor(torrent.state).bg}; border-radius: 9999px;"
+				style="height: 100%; width: {progressPct}%; background: {getProgressFillColor(torrent)}; border-radius: 9999px;"
 			></div>
 		</div>
 	</div>

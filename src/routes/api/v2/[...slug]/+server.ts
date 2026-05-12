@@ -9,14 +9,30 @@ function qbitError() {
 	if (!QBIT_URL) throw error(500, 'QBITTORRENT_API_URL not configured');
 }
 
-function extractCookieHeaderFromSetCookie(setCookieValues: string[]): string | null {
-	// Build a Cookie header value like: "SID=abcd1234"
+function extractCookiesFromSetCookie(setCookieValues: string[]): string | null {
+	// Build a Cookie header value like:
+	// "SID=abcd1234; foo=bar"
 	// from upstream Set-Cookie strings.
+	const parts: string[] = [];
+
 	for (const sc of setCookieValues) {
-		const match = /(?:^|;\s*)sid=([^;]+)/i.exec(sc);
-		if (match?.[1]) return `SID=${match[1].trim()}`;
+		// Set-Cookie format: "name=value; Path=/; HttpOnly; ..."
+		// We only take the first "name=value" segment.
+		const firstSegment = sc.split(';')[0]?.trim();
+		if (!firstSegment) continue;
+
+		const eqIdx = firstSegment.indexOf('=');
+		if (eqIdx === -1) continue;
+
+		const name = firstSegment.slice(0, eqIdx).trim();
+		const value = firstSegment.slice(eqIdx + 1).trim();
+
+		if (!name || !value) continue;
+		parts.push(`${name}=${value}`);
 	}
-	return null;
+
+	if (parts.length === 0) return null;
+	return parts.join('; ');
 }
 
 async function loginAndGetCookieHeader(): Promise<string | null> {
@@ -43,7 +59,7 @@ async function loginAndGetCookieHeader(): Promise<string | null> {
 			if (key.toLowerCase() === 'set-cookie') setCookies.push(value);
 		});
 
-		return extractCookieHeaderFromSetCookie(setCookies);
+		return extractCookiesFromSetCookie(setCookies);
 	} catch {
 		return null;
 	}
@@ -57,9 +73,9 @@ function forwardCookies(response: Response): Headers {
 	return h;
 }
 
-function mergeCookies(_reqCookie: string | null | undefined, sidCookie: string | null): string {
-	// We intentionally only send the SID cookie obtained from qBittorrent login.
-	return sidCookie || '';
+function mergeCookies(_reqCookie: string | null | undefined, upstreamCookie: string | null): string {
+	// We intentionally only send cookies obtained from qBittorrent login.
+	return upstreamCookie || '';
 }
 
 async function proxyRequest(

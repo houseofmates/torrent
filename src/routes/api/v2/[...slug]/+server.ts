@@ -124,25 +124,6 @@ async function proxyRequest(
 			);
 		}
 
-		// Improve visibility when qBittorrent denies access/auth after retry too.
-		if (res.status === 401 || res.status === 403) {
-			const text = await res.text();
-			const snippet = text.slice(0, 500);
-			return new Response(
-				JSON.stringify({
-					error: 'upstream auth failed',
-					upstreamStatus: res.status,
-					upstreamBodySnippet: snippet
-				}),
-				{
-					status: res.status,
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				}
-			);
-		}
-
 		return new Response(res.body, { status: res.status, headers: forwardCookies(res) });
 	} catch (err) {
 		throw error(502, `proxy error: ${err instanceof Error ? err.message : String(err)}`);

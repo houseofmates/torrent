@@ -39,22 +39,6 @@
 			uploading: 'uploading',
 			pausedDL: 'paused',
 			pausedUP: 'paused',
-			error: 'error',
-			missingFiles: 'missing files',
-			queuedUP: 'queued',
-			queuedDL: 'queued',
-			stalledUP: 'stalled',
-			stalledDL: 'stalled',
-			metaDL: 'metadata',
-			forcedDL: 'forced',
-			forcedUP: 'forced',
-			allocating: 'allocating',
-			moving: 'moving',
-		};
-		return labels[state] ?? state;
-	}
-
-	function formatBytes(bytes: number): string {
 		if (!bytes || bytes === 0) return '0 b';
 		const units = ['b', 'kb', 'mb', 'gb', 'tb'];
 		const i = Math.floor(Math.log(bytes) / Math.log(1024));

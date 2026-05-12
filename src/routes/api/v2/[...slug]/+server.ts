@@ -102,12 +102,11 @@ async function proxyRequest(
 	const apiUrl = new URL(`${QBIT_URL}/api/v2/${params.slug}`);
 	apiUrl.search = url.search;
 
-	const sidCookie = await ensureQbitAuthed();
-	const clientCookie = request.headers.get('cookie');
-	const mergedCookie = mergeCookies(clientCookie, sidCookie);
+	async function doFetch(withSid: string | null) {
+		const clientCookie = request.headers.get('cookie');
+		const mergedCookie = mergeCookies(clientCookie, withSid);
 
-	try {
-		const res = await fetch(apiUrl, {
+		return fetch(apiUrl, {
 			method,
 			headers: {
 				'Cookie': mergedCookie,
@@ -121,6 +120,18 @@ async function proxyRequest(
 			},
 			...(method === 'POST' ? { body: bodyText } : {})
 		});
+	}
+
+	try {
+		// first attempt (cached SID if available)
+		let sidCookie = await ensureQbitAuthed(false);
+		let res = await doFetch(sidCookie);
+
+		// Retry once on 403 (likely unauth / stale SID / not cached yet).
+		if (res.status === 403) {
+			sidCookie = await ensureQbitAuthed(true);
+			res = await doFetch(sidCookie);
+		}
 
 		return new Response(res.body, { status: res.status, headers: forwardCookies(res) });
 	} catch (err) {

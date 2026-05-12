@@ -28,6 +28,11 @@ function extractSidCookie(setCookie: string): string | null {
 }
 
 async function ensureQbitAuthed(force = false): Promise<string | null> {
+	// If we already have a cached SID cookie, reuse it.
+	if (!force && cachedSidCookie) return cachedSidCookie;
+	if (force) cachedSidCookie = null;
+
+	if (!QBIT_USERNAME || !QBIT_PASSWORD) return null;
 
 	const loginUrl = `${QBIT_URL}/api/v2/auth/login`;
 

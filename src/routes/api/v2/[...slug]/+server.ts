@@ -9,25 +9,17 @@ function qbitError() {
 	if (!QBIT_URL) throw error(500, 'QBITTORRENT_API_URL not configured');
 }
 
-// Cache qBittorrent auth cookie (SID) after a server-side login.
-// This avoids needing browser cookie jar support for /api/v2/* calls.
-let cachedSidCookie: string | null = null;
-
-function extractSidCookie(setCookie: string): string | null {
-	// Example: "SID=abcd1234; path=/; HttpOnly"
-	// Be liberal: match any "SID=..." segment case-insensitively.
-	const match = /(?:^|;\s*)sid=([^;]+)/i.exec(setCookie);
-	if (!match) return null;
-	const value = match[1]?.trim();
-	if (!value) return null;
-	return `SID=${value}`;
+function extractCookieHeaderFromSetCookie(setCookieValues: string[]): string | null {
+	// Build a Cookie header value like: "SID=abcd1234"
+	// from upstream Set-Cookie strings.
+	for (const sc of setCookieValues) {
+		const match = /(?:^|;\s*)sid=([^;]+)/i.exec(sc);
+		if (match?.[1]) return `SID=${match[1].trim()}`;
+	}
+	return null;
 }
 
-async function ensureQbitAuthed(force = false): Promise<string | null> {
-	// If we already have a cached SID cookie, reuse it.
-	if (!force && cachedSidCookie) return cachedSidCookie;
-	if (force) cachedSidCookie = null;
-
+async function loginAndGetCookieHeader(): Promise<string | null> {
 	if (!QBIT_USERNAME || !QBIT_PASSWORD) return null;
 
 	const loginUrl = `${QBIT_URL}/api/v2/auth/login`;
@@ -44,28 +36,14 @@ async function ensureQbitAuthed(force = false): Promise<string | null> {
 			}).toString()
 		});
 
-		// qBittorrent login returns 200 and sets cookies on success.
-		// If it returns 403/failed, we fall through without caching.
 		if (!res.ok) return null;
 
-		// Extract all Set-Cookie header values.
-		// (Node's fetch Headers does not reliably expose getSetCookie; use forEach instead.)
 		const setCookies: string[] = [];
 		res.headers.forEach((value, key) => {
-			if (key.toLowerCase() === 'set-cookie') {
-				setCookies.push(value);
-			}
+			if (key.toLowerCase() === 'set-cookie') setCookies.push(value);
 		});
 
-		for (const sc of setCookies) {
-			const sid = extractSidCookie(sc);
-			if (sid) {
-				cachedSidCookie = sid;
-				return cachedSidCookie;
-			}
-		}
-
-		return null;
+		return extractCookieHeaderFromSetCookie(setCookies);
 	} catch {
 		return null;
 	}
@@ -79,12 +57,9 @@ function forwardCookies(response: Response): Headers {
 	return h;
 }
 
-function mergeCookies(reqCookie: string | null | undefined, sidCookie: string | null): string {
-	// qBittorrent is strict about auth; if we have an SID from our server-side login,
-	// only send that (don’t combine with any inbound/foreign cookies).
-	// The incoming browser cookie header may include unrelated cookies that can confuse auth.
-	if (sidCookie) return sidCookie;
-	return (reqCookie || '').trim();
+function mergeCookies(_reqCookie: string | null | undefined, sidCookie: string | null): string {
+	// We intentionally only send the SID cookie obtained from qBittorrent login.
+	return sidCookie || '';
 }
 
 async function proxyRequest(
@@ -120,19 +95,13 @@ async function proxyRequest(
 	}
 
 	try {
-	// first attempt (cached SID if available). If we don’t have SID, force a login.
-		let sidCookie = await ensureQbitAuthed(false);
-		if (!sidCookie) {
-			sidCookie = await ensureQbitAuthed(true);
-		}
-
+	// Login per request so we always have a fresh/valid SID.
+		let sidCookie = await loginAndGetCookieHeader();
 		let res = await doFetch(sidCookie);
 
-		// Retry once on 403 (likely stale SID / login didn’t produce usable SID).
+		// Retry once on 403: re-login and try again.
 		if (res.status === 403) {
-			// force relogin and reattempt with fresh SID
-			cachedSidCookie = null;
-			sidCookie = await ensureQbitAuthed(true);
+			sidCookie = await loginAndGetCookieHeader();
 			res = await doFetch(sidCookie);
 		}
 

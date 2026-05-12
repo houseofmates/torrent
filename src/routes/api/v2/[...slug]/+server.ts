@@ -17,15 +17,17 @@ function extractSidCookie(setCookie: string): string | null {
 	// Example: "SID=abcd1234; path=/; HttpOnly"
 	const firstPart = setCookie.split(';', 1)[0]?.trim();
 	if (!firstPart) return null;
-	if (!firstPart.toUpperCase().startsWith('SID=')) return null;
+
+	// qBittorrent uses "SID=..."; handle case-insensitively.
+	const [name] = firstPart.split('=', 1);
+	if (!name) return null;
+	if (name.toLowerCase() !== 'sid') return null;
+
+	// Keep original "SID=..." casing for cookie header friendliness.
 	return firstPart;
 }
 
-async function ensureQbitAuthed(): Promise<string | null> {
-	// If we already have a cached SID cookie, reuse it.
-	if (cachedSidCookie) return cachedSidCookie;
-
-	if (!QBIT_USERNAME || !QBIT_PASSWORD) return null;
+async function ensureQbitAuthed(force = false): Promise<string | null> {
 
 	const loginUrl = `${QBIT_URL}/api/v2/auth/login`;
 

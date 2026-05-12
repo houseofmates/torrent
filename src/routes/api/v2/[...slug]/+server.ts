@@ -15,16 +15,12 @@ let cachedSidCookie: string | null = null;
 
 function extractSidCookie(setCookie: string): string | null {
 	// Example: "SID=abcd1234; path=/; HttpOnly"
-	const firstPart = setCookie.split(';', 1)[0]?.trim();
-	if (!firstPart) return null;
-
-	// qBittorrent uses "SID=..."; handle case-insensitively.
-	const [name] = firstPart.split('=', 1);
-	if (!name) return null;
-	if (name.toLowerCase() !== 'sid') return null;
-
-	// Keep original "SID=..." casing for cookie header friendliness.
-	return firstPart;
+	// Be liberal: match any "SID=..." segment case-insensitively.
+	const match = /(?:^|;\s*)sid=([^;]+)/i.exec(setCookie);
+	if (!match) return null;
+	const value = match[1]?.trim();
+	if (!value) return null;
+	return `SID=${value}`;
 }
 
 async function ensureQbitAuthed(force = false): Promise<string | null> {

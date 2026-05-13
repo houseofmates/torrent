@@ -20,9 +20,10 @@ echo "$(date): Starting torrent watchdog" >> "$LOG_FILE"
 
 # Start torrent client
 cd /home/house/torrent
-npm run dev >> "$LOG_FILE" 2>&1 &
+npm run build >> "$LOG_FILE" 2>&1
+npm run start >> "$LOG_FILE" 2>&1 &
 CLIENT_PID=$!
-echo "$(date): Started npm dev with PID $CLIENT_PID" >> "$LOG_FILE"
+echo "$(date): Started npm start with PID $CLIENT_PID" >> "$LOG_FILE"
 
 # Main watchdog loop
 while true; do
@@ -30,7 +31,8 @@ while true; do
     if ! kill -0 $CLIENT_PID 2>/dev/null; then
         # Client died, restart it
         echo "$(date): Torrent client (PID $CLIENT_PID) died, restarting..." >> "$LOG_FILE"
-        npm run dev >> "$LOG_FILE" 2>&1 &
+        npm run build >> "$LOG_FILE" 2>&1
+        npm run start >> "$LOG_FILE" 2>&1 &
         CLIENT_PID=$!
         echo "$(date): Restarted with new PID $CLIENT_PID" >> "$LOG_FILE"
     fi

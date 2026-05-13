@@ -193,6 +193,13 @@ async function proxyApi(req, res, slug) {
     return;
   }
 
+  await fs.appendFile(path.join(__dirname, 'proxy-debug.log'), JSON.stringify({
+    timestamp: new Date().toISOString(),
+    slug,
+    method: req.method,
+    url: req.url
+  }) + '\n');
+
   const upstreamUrl = buildQbitUrl(slug, req.url || '/');
   const body = req.method === 'POST' || req.method === 'PUT' ? await readRequestBody(req) : null;
 

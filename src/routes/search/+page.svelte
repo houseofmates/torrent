@@ -109,21 +109,6 @@
 		}
 	}
 
-	async function download(result: SearchResult) {
-		const url = result.fileUrl || result.descrLink;
-		if (!url) return;
-		const key = result.fileName;
-		downloading = { ...downloading, [key]: true };
-
-		try {
-			await doAddTorrent(url);
-		} catch {
-			// toast shown by store
-		} finally {
-			downloading = { ...downloading, [key]: false };
-		}
-	}
-
 	function formatSize(bytes: number): string {
 		if (!bytes || bytes === 0) return '0 b';
 		const units = ['b', 'kb', 'mb', 'gb', 'tb'];

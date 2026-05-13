@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Restart torrent server",
+      "type": "shell",
+      "command": "cd /home/house/torrent && set -a && . .env && nohup node server.js > /home/house/torrent/server-run.log 2>&1 < /dev/null &",
+      "problemMatcher": []
+    }
+  ]
+}

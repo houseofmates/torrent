@@ -11,19 +11,28 @@ sync_changes() {
     fi
 }
 
+# Log location - use home directory since /tmp might be read-only
+LOG_DIR="$HOME/.torrent-logs"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/watchdog.log"
+
+echo "$(date): Starting torrent watchdog" >> "$LOG_FILE"
+
 # Start torrent client
 cd /home/house/torrent
-npm run dev --port 3004 --host &
+npm run dev >> "$LOG_FILE" 2>&1 &
 CLIENT_PID=$!
+echo "$(date): Started npm dev with PID $CLIENT_PID" >> "$LOG_FILE"
 
 # Main watchdog loop
 while true; do
     # Check if client process is still running
     if ! kill -0 $CLIENT_PID 2>/dev/null; then
         # Client died, restart it
-        echo "$(date): Torrent client died, restarting..." >> /tmp/torrent-watchdog.log
-        npm run dev --port 3004 --host &
+        echo "$(date): Torrent client (PID $CLIENT_PID) died, restarting..." >> "$LOG_FILE"
+        npm run dev >> "$LOG_FILE" 2>&1 &
         CLIENT_PID=$!
+        echo "$(date): Restarted with new PID $CLIENT_PID" >> "$LOG_FILE"
     fi
 
     # Sync git changes every 10 seconds

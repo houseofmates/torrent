@@ -54,17 +54,6 @@
 		return labels[state] ?? state;
 	}
 
-	function isDownloadLikeState(state: string): boolean {
-		return [
-			'downloading',
-			'pausedDL',
-			'queuedDL',
-			'stalledDL',
-			'forcedDL',
-			'metaDL'
-		].includes(state);
-	}
-
 	function getProgressFillColor(t: Torrent): string {
 		// The bar is a completion indicator, so use the orange fill for any
 		// torrent that has progress rather than mapping it to the state badge color.

@@ -17,6 +17,7 @@ export const maindata = writable<Partial<MainData>>({});
 export const preferences = writable<TorrentPreferences | null>(null);
 export const categories = writable<Record<string, Category>>({});
 export const searchPlugins = writable<SearchPlugin[]>([]);
+export const connectionError = writable<string>('');
 
 // -- ui stores --
 type ToastType = 'info' | 'error' | 'success';
@@ -57,6 +58,7 @@ async function pollMaindata() {
 		if (data.rid !== undefined) lastRid = data.rid;
 
 		maindata.set(data);
+		connectionError.set('');
 
 		if (data.torrents) {
 			const current = get(torrents);
@@ -81,12 +83,17 @@ async function pollMaindata() {
 
 		if (connectionLostToastShown) {
 			connectionLostToastShown = false;
+			connectionError.set('');
 			addToast('reconnected', 'success');
 		}
 	} catch (err) {
-		if (get(isAuthenticated) && !connectionLostToastShown) {
-			addToast('connection lost. retrying...', 'error');
-			connectionLostToastShown = true;
+		const errorMessage = err instanceof Error ? err.message : String(err);
+		if (get(isAuthenticated)) {
+			connectionError.set(errorMessage);
+			if (!connectionLostToastShown) {
+				addToast('connection lost. retrying...', 'error');
+				connectionLostToastShown = true;
+			}
 		}
 		// always update maindata so the loading state can resolve
 		maindata.update((md) => md);
@@ -164,6 +171,7 @@ export async function doLogout() {
 	isAuthenticated.set(false);
 	torrents.set([]);
 	maindata.set({});
+	connectionError.set('');
 	try {
 		await api.logout();
 	} catch {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { torrents, maindata, addToast, modal, startPolling, stopPolling } from '$lib/stores';
+	import { torrents, maindata, connectionError, addToast, modal, startPolling, stopPolling } from '$lib/stores';
 	import TorrentCard from '$lib/TorrentCard.svelte';
 	import AddTorrentModal from '$lib/AddTorrentModal.svelte';
 	import ContextMenu, { type ContextMenuItem } from '$lib/ContextMenu.svelte';
@@ -233,10 +233,10 @@
 				</div>
 			{/each}
 		</div>
-	{:else if error}
+	{:else if error || $connectionError}
 		<div class="text-center py-16">
-			<p class="text-sm mb-4" style="color: var(--color-danger);">{error}</p>
-			<button onclick={() => { loading = true; error = ''; startPolling(); }}
+			<p class="text-sm mb-4" style="color: var(--color-danger);">{error || $connectionError}</p>
+			<button onclick={() => { loading = true; error = ''; connectionError.set(''); startPolling(); }}
 				class="px-4 py-2 text-sm font-bold transition-all duration-150 active:scale-[0.98]"
 				style="background: var(--color-accent-blue); border-radius: 8px; color: #050505;">retry</button>
 		</div>

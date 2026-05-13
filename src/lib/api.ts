@@ -202,8 +202,25 @@ export async function searchStart(
 	category = 'all'
 ): Promise<number> {
 	const res = await post('search/start', new URLSearchParams({ pattern, plugins, category }));
-	const data = await res.json() as { id: number };
-	return data.id;
+	const text = await res.text();
+	const trimmed = text.trim();
+	if (!trimmed) {
+		throw new Error('search start returned empty response');
+	}
+
+	if (trimmed.startsWith('{')) {
+		const data = JSON.parse(trimmed) as { id: number };
+		if (typeof data.id !== 'number') {
+			throw new Error('invalid search start response');
+		}
+		return data.id;
+	}
+
+	const id = Number(trimmed);
+	if (!Number.isFinite(id)) {
+		throw new Error('invalid search start response');
+	}
+	return id;
 }
 
 export async function searchResults(id: number, limit?: number, offset?: number): Promise<SearchResults> {

@@ -114,7 +114,7 @@ function extractQbitCookie(cookieHeader) {
   return normalized
     .split(';')
     .map((cookie) => cookie.trim())
-    .filter((cookie) => /^SID=/i.test(cookie))
+    .filter((cookie) => /^(?:QBT_)?SID=/i.test(cookie))
     .join('; ');
 }
 

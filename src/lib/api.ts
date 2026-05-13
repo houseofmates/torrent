@@ -14,6 +14,7 @@ async function post(path: string, body: URLSearchParams | FormData, signal?: Abo
 	const res = await fetch(`${api}/${path}`, {
 		method: 'POST',
 		body,
+		credentials: 'include',
 		signal
 	});
 	if (!res.ok) throw new Error(`api error: ${res.status} ${res.statusText}`);
@@ -23,7 +24,7 @@ async function post(path: string, body: URLSearchParams | FormData, signal?: Abo
 async function get(path: string, params?: Record<string, string>, signal?: AbortSignal) {
 	const url = new URL(`${api}/${path}`, window.location.origin);
 	if (params) Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-	const res = await fetch(url.toString(), { signal });
+	const res = await fetch(url.toString(), { credentials: 'include', signal });
 	if (!res.ok) throw new Error(`api error: ${res.status} ${res.statusText}`);
 	return res.json();
 }
@@ -32,6 +33,7 @@ export async function login(username: string, password: string): Promise<boolean
 	const res = await fetch(`${api}/auth/login`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		credentials: 'include',
 		body: new URLSearchParams({ username, password })
 	});
 	return res.ok;
@@ -98,6 +100,7 @@ export async function addTorrentFiles(
 	const res = await fetch(`${api}/torrents/add`, {
 		method: 'POST',
 		body,
+		credentials: 'include',
 		signal
 	});
 	if (!res.ok) throw new Error(`api error: ${res.status} ${res.statusText}`);

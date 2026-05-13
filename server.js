@@ -6,9 +6,35 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const buildDir = path.resolve(__dirname, 'build');
-const QBIT_URL = process.env.QBITTORRENT_API_URL;
-const QBIT_USERNAME = process.env.QBITTORRENT_USERNAME;
-const QBIT_PASSWORD = process.env.QBITTORRENT_PASSWORD;
+
+function parseDotEnv(text) {
+  const result = {};
+  for (const line of text.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
+    if (!match) continue;
+    let [, key, value] = match;
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+    result[key] = value;
+  }
+  return result;
+}
+
+let envFromFile = {};
+try {
+  const envFile = path.resolve(__dirname, '.env');
+  const envText = await fs.readFile(envFile, 'utf8');
+  envFromFile = parseDotEnv(envText);
+} catch {
+  // ignore missing or unreadable .env
+}
+
+const QBIT_URL = process.env.QBITTORRENT_API_URL || envFromFile.QBITTORRENT_API_URL;
+const QBIT_USERNAME = process.env.QBITTORRENT_USERNAME || envFromFile.QBITTORRENT_USERNAME;
+const QBIT_PASSWORD = process.env.QBITTORRENT_PASSWORD || envFromFile.QBITTORRENT_PASSWORD;
 const PORT = Number(process.env.PORT || 3004);
 
 console.log(`Starting torrent app server...`);

@@ -73,22 +73,30 @@ function buildQbitUrl(slug, originalUrl) {
   return url;
 }
 
+function normalizeCookieHeader(value) {
+  if (!value) return '';
+  return Array.isArray(value) ? value.join('; ') : value;
+}
+
+function extractQbitCookie(cookieHeader) {
+  const normalized = normalizeCookieHeader(cookieHeader);
+  return normalized
+    .split(';')
+    .map((cookie) => cookie.trim())
+    .filter((cookie) => /^SID=/i.test(cookie))
+    .join('; ');
+}
+
 function buildHeaders(reqHeaders, sidCookie) {
   const headers = {};
   for (const [key, value] of Object.entries(reqHeaders)) {
-    if (!value || key === 'host' || key === 'connection' || key === 'content-length') continue;
+    if (!value || key === 'host' || key === 'connection' || key === 'content-length' || key === 'cookie') continue;
     headers[key] = value;
   }
 
-  const incomingCookie = headers.cookie || headers.Cookie;
-  if (incomingCookie) {
-    delete headers.cookie;
-  }
-
-  if (sidCookie) {
-    headers.Cookie = incomingCookie ? `${incomingCookie}; ${sidCookie}` : sidCookie;
-  } else if (incomingCookie) {
-    headers.Cookie = incomingCookie;
+  const qbitCookie = sidCookie || extractQbitCookie(reqHeaders.cookie || reqHeaders.Cookie);
+  if (qbitCookie) {
+    headers.Cookie = qbitCookie;
   }
 
   return headers;
@@ -169,13 +177,21 @@ async function proxyApi(req, res, slug) {
   try {
     if (slug === 'auth/login' && req.method === 'POST') {
       const upstreamRes = await doFetch(null);
+      const setCookies = [];
+      upstreamRes.headers.forEach((value, key) => {
+        if (key.toLowerCase() === 'set-cookie') setCookies.push(value);
+      });
+
       if (upstreamRes.ok) {
-        const setCookies = [];
-        upstreamRes.headers.forEach((value, key) => {
-          if (key.toLowerCase() === 'set-cookie') setCookies.push(value);
-        });
         cachedSidCookie = setCookies.length > 0 ? setCookies.map((value) => value.split(';')[0].trim()).join('; ') : cachedSidCookie;
+      } else {
+        const errorBody = await upstreamRes.text();
+        console.error(`qBittorrent auth/login returned ${upstreamRes.status}: ${errorBody.slice(0, 1000)}`);
+        res.writeHead(upstreamRes.status, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ error: 'upstream auth/login failed', status: upstreamRes.status, body: errorBody.slice(0, 1000) }));
+        return;
       }
+
       await forwardResponse(upstreamRes);
       return;
     }

@@ -47,6 +47,7 @@ export function addToast(message: string, type: ToastType = 'info', duration = 3
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 let lastRid = 0;
 let polling = false;
+let connectionLostToastShown = false;
 
 async function pollMaindata() {
 	if (polling) return;
@@ -77,9 +78,15 @@ async function pollMaindata() {
 				torrents.set(updated);
 			}
 		}
+
+		if (connectionLostToastShown) {
+			connectionLostToastShown = false;
+			addToast('reconnected', 'success');
+		}
 	} catch (err) {
-		if (get(isAuthenticated)) {
+		if (get(isAuthenticated) && !connectionLostToastShown) {
 			addToast('connection lost. retrying...', 'error');
+			connectionLostToastShown = true;
 		}
 		// always update maindata so the loading state can resolve
 		maindata.update((md) => md);

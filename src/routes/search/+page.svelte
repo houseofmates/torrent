@@ -29,12 +29,17 @@
 		return ['all', ...Array.from(cats)];
 	});
 
+	function getNumericValue(value: unknown): number {
+		const numeric = Number(value ?? 0);
+		return Number.isFinite(numeric) ? numeric : 0;
+	}
+
 	let sortedResults = $derived.by(() => {
 		const sorted = [...results];
 		sorted.sort((a, b) => {
 			let cmp = 0;
-			if (sortField === 'seeds') cmp = (a.nbSeeders || 0) - (b.nbSeeders || 0);
-			else if (sortField === 'size') cmp = (a.fileSize || 0) - (b.fileSize || 0);
+			if (sortField === 'seeds') cmp = getNumericValue(a.nbSeeders) - getNumericValue(b.nbSeeders);
+			else if (sortField === 'size') cmp = getNumericValue(a.fileSize) - getNumericValue(b.fileSize);
 			else cmp = (a.fileName || '').localeCompare(b.fileName || '');
 			return sortReverse ? -cmp : cmp;
 		});

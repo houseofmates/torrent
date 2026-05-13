@@ -12,9 +12,9 @@ const QBIT_PASSWORD = process.env.QBITTORRENT_PASSWORD;
 const PORT = Number(process.env.PORT || 3004);
 
 console.log(`Starting torrent app server...`);
-console.log(`QBITTORRENT_API_URL: ${QBIT_URL ? 'set' : 'not set'}`);
-console.log(`QBITTORRENT_USERNAME: ${QBIT_USERNAME ? 'set' : 'not set'}`);
-console.log(`QBITTORRENT_PASSWORD: ${QBIT_PASSWORD ? 'set' : 'not set'}`);
+console.log(`QBITTORRENT_API_URL: ${QBIT_URL || '(not set)'}`);
+console.log(`QBITTORRENT_USERNAME: ${QBIT_USERNAME || '(not set)'}`);
+console.log(`QBITTORRENT_PASSWORD: ${QBIT_PASSWORD ? '(set)' : '(not set)'}`);
 console.log(`PORT: ${PORT}`);
 
 const mimeTypes = {

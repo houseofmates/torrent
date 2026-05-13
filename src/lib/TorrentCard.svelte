@@ -74,6 +74,11 @@
 		return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
 	}
 
+	let progressPct = $derived(() => {
+		const value = Math.round((torrent.progress ?? 0) * 100);
+		return Math.min(100, Math.max(0, value));
+	});
+
 	async function togglePause() {
 		const isPaused = torrent.state.includes('paused');
 		if (isPaused) {

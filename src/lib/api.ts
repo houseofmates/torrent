@@ -257,11 +257,6 @@ export async function searchResults(id: number, limit?: number, offset?: number)
 	const text = await res.text();
 	return parseSearchResultsResponse(text);
 }
-	const params: Record<string, string> = { id: String(id) };
-	if (limit !== undefined) params.limit = String(limit);
-	if (offset !== undefined) params.offset = String(offset);
-	return get('search/results', params);
-}
 
 export async function searchStop(id: number): Promise<void> {
 	await post('search/stop', new URLSearchParams({ id: String(id) }));

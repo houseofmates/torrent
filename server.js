@@ -79,9 +79,18 @@ function buildHeaders(reqHeaders, sidCookie) {
     if (!value || key === 'host' || key === 'connection' || key === 'content-length') continue;
     headers[key] = value;
   }
-  if (sidCookie) {
-    headers.Cookie = sidCookie;
+
+  const incomingCookie = headers.cookie || headers.Cookie;
+  if (incomingCookie) {
+    delete headers.cookie;
   }
+
+  if (sidCookie) {
+    headers.Cookie = incomingCookie ? `${incomingCookie}; ${sidCookie}` : sidCookie;
+  } else if (incomingCookie) {
+    headers.Cookie = incomingCookie;
+  }
+
   return headers;
 }
 

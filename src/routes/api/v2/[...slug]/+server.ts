@@ -142,16 +142,27 @@ async function proxyRequest(
 			return new Response(res.body, { status: res.status, headers: forwardCookies(res) });
 		}
 
-					upstreamBodySnippet: snippet
-				}),
-				{
-					status: res.status,
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				}
-			);
-		}
+			let sidCookie = await loginAndGetCookieHeader();
+			let res = await doFetch(sidCookie);
+			if (res.status === 403) {
+				sidCookie = await loginAndGetCookieHeader(true);
+				res = await doFetch(sidCookie);
+			}
+
+			if (!res.ok) {
+				const errorBody = await res.text();
+				console.error(`qBittorrent proxy request failed: ${res.status} ${res.statusText} ${errorBody.slice(0, 1000)}`);
+				return new Response(
+					JSON.stringify({
+						error: 'upstream proxy failed',
+						status: res.status,
+						bodySnippet: errorBody.slice(0, 1000)
+					}),
+					{ status: res.status, headers: { 'Content-Type': 'application/json' } }
+				);
+			}
+
+			return new Response(res.body, { status: res.status, headers: forwardCookies(res) });
 
 		return new Response(res.body, { status: res.status, headers: forwardCookies(res) });
 	} catch (err) {

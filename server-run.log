@@ -5,4 +5,3 @@ QBITTORRENT_USERNAME: house
 QBITTORRENT_PASSWORD: (set)
 PORT: 3004
 Torrent app server running on http://0.0.0.0:3004
-proxyApi called: auth/login POST /api/v2/auth/login

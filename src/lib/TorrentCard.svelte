@@ -95,8 +95,6 @@
 	async function deleteTorrent(deleteFiles = false) {
 		await doDeleteTorrent(torrent.hash, deleteFiles);
 	}
-
-	let progressPct = $derived(Math.round((torrent.progress ?? 0) * 100));
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->

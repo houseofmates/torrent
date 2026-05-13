@@ -131,6 +131,25 @@
 		return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${units[i]}`;
 	}
 
+	function getResultKey(result: SearchResult, index: number) {
+		return result.fileUrl ?? result.descrLink ?? `${result.fileName}-${result.fileSize}-${result.siteUrl}-${index}`;
+	}
+
+	async function download(result: SearchResult, index: number) {
+		const url = result.fileUrl || result.descrLink;
+		if (!url) return;
+		const key = getResultKey(result, index);
+		downloading = { ...downloading, [key]: true };
+
+		try {
+			await doAddTorrent(url);
+		} catch {
+			// toast shown by store
+		} finally {
+			downloading = { ...downloading, [key]: false };
+		}
+	}
+
 	function stopSearch() {
 		if (searchId !== null) {
 			doSearchStop(searchId);

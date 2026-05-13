@@ -291,13 +291,20 @@ async function serveStatic(req, res) {
     }
 
     const file = await fs.readFile(filePath);
-    res.writeHead(200, { 'Content-Type': getContentType(filePath) });
+    const contentType = getContentType(filePath);
+    res.writeHead(200, {
+      'Content-Type': contentType,
+      'Cache-Control': getCacheControl(filePath)
+    });
     res.end(file);
   } catch {
     try {
       const fallback = path.join(buildDir, 'index.html');
       const fallbackFile = await fs.readFile(fallback);
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-store'
+      });
       res.end(fallbackFile);
     } catch {
       respondJSON(res, 404, { error: 'Not found' });

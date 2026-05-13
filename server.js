@@ -226,7 +226,10 @@ async function proxyApi(req, res, slug) {
   }
 
   async function forwardResponse(upstreamRes) {
-    const responseHeaders = {};
+    const responseHeaders = {
+      'Cache-Control': 'no-store'
+    };
+
     upstreamRes.headers.forEach((value, key) => {
       if (key.toLowerCase() === 'set-cookie') {
         responseHeaders['Set-Cookie'] = responseHeaders['Set-Cookie']

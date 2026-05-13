@@ -121,6 +121,7 @@ export async function doLogin(username: string, password: string): Promise<boole
 	try {
 		const ok = await api.login(username, password);
 		if (ok) {
+			connectionError.set('');
 			const data = await api.syncMaindata(0);
 			if (data.rid !== undefined) lastRid = data.rid;
 			maindata.set(data);

@@ -118,10 +118,28 @@ function extractQbitCookie(cookieHeader) {
     .join('; ');
 }
 
+const IGNORED_UPSTREAM_HEADERS = new Set([
+  'host',
+  'connection',
+  'content-length',
+  'origin',
+  'referer',
+  'accept-encoding',
+  'sec-fetch-dest',
+  'sec-fetch-mode',
+  'sec-fetch-site',
+  'sec-fetch-user',
+  'sec-ch-ua',
+  'sec-ch-ua-mobile',
+  'sec-ch-ua-platform'
+]);
+
 function buildHeaders(reqHeaders, sidCookie) {
   const headers = {};
   for (const [key, value] of Object.entries(reqHeaders)) {
-    if (!value || key === 'host' || key === 'connection' || key === 'content-length' || key === 'cookie') continue;
+    if (!value) continue;
+    const lowerKey = key.toLowerCase();
+    if (IGNORED_UPSTREAM_HEADERS.has(lowerKey) || lowerKey === 'cookie') continue;
     headers[key] = value;
   }
 

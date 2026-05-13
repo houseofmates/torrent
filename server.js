@@ -231,7 +231,7 @@ async function proxyApi(req, res, slug) {
 
   try {
     if (slug === 'auth/login' && req.method === 'POST') {
-      const upstreamRes = await doFetch(null);
+      const upstreamRes = await doFetch(null, true);
       const setCookies = [];
       upstreamRes.headers.forEach((value, key) => {
         if (key.toLowerCase() === 'set-cookie') setCookies.push(value);

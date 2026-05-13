@@ -241,7 +241,7 @@
 	<!-- results -->
 	{#if sortedResults.length > 0}
 		<div class="flex flex-col gap-3" role="list">
-			{#each sortedResults as result (result.fileName + result.fileSize + result.siteUrl)}
+			{#each sortedResults as result, index (result.fileUrl ?? result.descrLink ?? `${result.fileName}-${result.fileSize}-${result.siteUrl}-${index}`)}
 				<div role="listitem" class="border p-4 transition-colors duration-150" style="border-color: var(--color-border-subtle); background: var(--color-surface-card); border-radius: 10px;">
 					<div class="flex items-start justify-between gap-3">
 						<div class="flex-1 min-w-0">

@@ -118,7 +118,6 @@ async function proxyApi(req, res, slug) {
 
   const upstreamUrl = buildQbitUrl(slug, req.url || '/');
   let sidCookie = await loginCookie();
-  let headers = buildHeaders(req.headers, sidCookie);
   const body = req.method === 'POST' || req.method === 'PUT' ? await readRequestBody(req) : null;
 
   async function doFetch(cookie) {

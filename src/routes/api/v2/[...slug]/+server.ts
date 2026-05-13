@@ -35,8 +35,11 @@ function extractCookiesFromSetCookie(setCookieValues: string[]): string | null {
 	return parts.join('; ');
 }
 
-async function loginAndGetCookieHeader(): Promise<string | null> {
+let cachedSidCookie: string | null = null;
+
+async function loginAndGetCookieHeader(force = false): Promise<string | null> {
 	if (!QBIT_USERNAME || !QBIT_PASSWORD) return null;
+	if (cachedSidCookie && !force) return cachedSidCookie;
 
 	const loginUrl = `${QBIT_URL}/api/v2/auth/login`;
 
@@ -59,7 +62,8 @@ async function loginAndGetCookieHeader(): Promise<string | null> {
 			if (key.toLowerCase() === 'set-cookie') setCookies.push(value);
 		});
 
-		return extractCookiesFromSetCookie(setCookies);
+		cachedSidCookie = extractCookiesFromSetCookie(setCookies);
+		return cachedSidCookie;
 	} catch {
 		return null;
 	}

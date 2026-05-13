@@ -137,7 +137,6 @@ async function proxyApi(req, res, slug) {
   }
 
   const upstreamUrl = buildQbitUrl(slug, req.url || '/');
-  let sidCookie = await loginCookie();
   const body = req.method === 'POST' || req.method === 'PUT' ? await readRequestBody(req) : null;
 
   async function doFetch(cookie) {
@@ -148,13 +147,7 @@ async function proxyApi(req, res, slug) {
     });
   }
 
-  try {
-    let upstreamRes = await doFetch(sidCookie);
-    if (upstreamRes.status === 403) {
-      sidCookie = await loginCookie(true);
-      upstreamRes = await doFetch(sidCookie);
-    }
-
+  async function forwardResponse(upstreamRes) {
     const responseHeaders = {};
     upstreamRes.headers.forEach((value, key) => {
       if (key.toLowerCase() === 'set-cookie') {
@@ -171,6 +164,30 @@ async function proxyApi(req, res, slug) {
     res.writeHead(upstreamRes.status, responseHeaders);
     const buffer = Buffer.from(await upstreamRes.arrayBuffer());
     res.end(buffer);
+  }
+
+  try {
+    if (slug === 'auth/login' && req.method === 'POST') {
+      const upstreamRes = await doFetch(null);
+      if (upstreamRes.ok) {
+        const setCookies = [];
+        upstreamRes.headers.forEach((value, key) => {
+          if (key.toLowerCase() === 'set-cookie') setCookies.push(value);
+        });
+        cachedSidCookie = setCookies.length > 0 ? setCookies.map((value) => value.split(';')[0].trim()).join('; ') : cachedSidCookie;
+      }
+      await forwardResponse(upstreamRes);
+      return;
+    }
+
+    let sidCookie = await loginCookie();
+    let upstreamRes = await doFetch(sidCookie);
+    if (upstreamRes.status === 403) {
+      sidCookie = await loginCookie(true);
+      upstreamRes = await doFetch(sidCookie);
+    }
+
+    await forwardResponse(upstreamRes);
   } catch (err) {
     respondJSON(res, 502, { error: err instanceof Error ? err.message : String(err) });
   }

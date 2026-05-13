@@ -24,12 +24,17 @@ function parseDotEnv(text) {
 }
 
 let envFromFile = {};
+let envFilePath = path.resolve(__dirname, '.env');
 try {
-  const envFile = path.resolve(__dirname, '.env');
-  const envText = await fs.readFile(envFile, 'utf8');
+  const envText = await fs.readFile(envFilePath, 'utf8');
   envFromFile = parseDotEnv(envText);
-} catch {
-  // ignore missing or unreadable .env
+  if (Object.keys(envFromFile).length > 0) {
+    console.log(`Loaded .env fallback from ${envFilePath}`);
+  }
+} catch (err) {
+  if (err.code !== 'ENOENT') {
+    console.warn(`Unable to read .env file at ${envFilePath}: ${err.message}`);
+  }
 }
 
 const QBIT_URL = process.env.QBITTORRENT_API_URL || envFromFile.QBITTORRENT_API_URL;

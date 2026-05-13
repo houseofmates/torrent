@@ -263,7 +263,7 @@
 							class="px-3 py-2 text-xs font-bold border whitespace-nowrap disabled:opacity-40 transition-all duration-150 active:scale-[0.98] flex-shrink-0"
 							style="background: {downloading[getResultKey(result, index)] ? 'transparent' : 'var(--color-accent-blue)'}; border-color: var(--color-accent-blue); border-radius: 6px; color: {downloading[getResultKey(result, index)] ? 'var(--color-text-info)' : '#050505'};"
 						>
-							{downloading[result.fileName] ? 'adding...' : 'download'}
+							{downloading[getResultKey(result, index)] ? 'adding...' : 'download'}
 						</button>
 					</div>
 				</div>

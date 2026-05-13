@@ -203,16 +203,6 @@ async function proxyApi(req, res, slug) {
         }
       : buildHeaders(req.headers, cookie);
 
-    if (slug === 'auth/login' && req.method === 'POST') {
-      const debugEntry = {
-        timestamp: new Date().toISOString(),
-        upstreamUrl: upstreamUrl.toString(),
-        headers,
-        body: body?.toString('utf8')
-      };
-      await fs.appendFile(path.join(__dirname, 'proxy-debug.log'), JSON.stringify(debugEntry) + '\n');
-    }
-
     return fetch(upstreamUrl.toString(), {
       method: req.method,
       headers,

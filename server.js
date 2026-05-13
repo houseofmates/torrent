@@ -199,5 +199,10 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Starting torrent app server...`);
+  console.log(`QBITTORRENT_API_URL: ${QBIT_URL ? 'set' : 'not set'}`);
+  console.log(`QBITTORRENT_USERNAME: ${QBIT_USERNAME ? 'set' : 'not set'}`);
+  console.log(`QBITTORRENT_PASSWORD: ${QBIT_PASSWORD ? 'set' : 'not set'}`);
+  console.log(`PORT: ${PORT}`);
   console.log(`Torrent app server running on http://0.0.0.0:${PORT}`);
 });

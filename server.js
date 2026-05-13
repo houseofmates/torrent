@@ -11,6 +11,12 @@ const QBIT_USERNAME = process.env.QBITTORRENT_USERNAME;
 const QBIT_PASSWORD = process.env.QBITTORRENT_PASSWORD;
 const PORT = Number(process.env.PORT || 3004);
 
+console.log(`Starting torrent app server...`);
+console.log(`QBITTORRENT_API_URL: ${QBIT_URL ? 'set' : 'not set'}`);
+console.log(`QBITTORRENT_USERNAME: ${QBIT_USERNAME ? 'set' : 'not set'}`);
+console.log(`QBITTORRENT_PASSWORD: ${QBIT_PASSWORD ? 'set' : 'not set'}`);
+console.log(`PORT: ${PORT}`);
+
 const mimeTypes = {
   html: 'text/html; charset=utf-8',
   js: 'application/javascript; charset=utf-8',
@@ -199,10 +205,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Starting torrent app server...`);
-  console.log(`QBITTORRENT_API_URL: ${QBIT_URL ? 'set' : 'not set'}`);
-  console.log(`QBITTORRENT_USERNAME: ${QBIT_USERNAME ? 'set' : 'not set'}`);
-  console.log(`QBITTORRENT_PASSWORD: ${QBIT_PASSWORD ? 'set' : 'not set'}`);
-  console.log(`PORT: ${PORT}`);
   console.log(`Torrent app server running on http://0.0.0.0:${PORT}`);
 });

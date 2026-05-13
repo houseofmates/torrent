@@ -196,24 +196,23 @@ export async function searchPlugins(): Promise<SearchPlugin[]> {
 	return get('search/plugins');
 }
 
-export async function searchStart(
-	pattern: string,
-	plugins = 'all',
-	category = 'all'
-): Promise<number> {
-	const res = await post('search/start', new URLSearchParams({ pattern, plugins, category }));
-	const text = await res.text();
+function parseSearchStartResponse(text: string): number {
 	const trimmed = text.trim();
 	if (!trimmed) {
 		throw new Error('search start returned empty response');
 	}
 
-	if (trimmed.startsWith('{')) {
-		const data = JSON.parse(trimmed) as { id: number };
-		if (typeof data.id !== 'number') {
-			throw new Error('invalid search start response');
+	if (trimmed.startsWith('{') || trimmed.startsWith('[') || trimmed.startsWith('"')) {
+		const data = JSON.parse(trimmed);
+		if (typeof data === 'object' && data !== null && 'id' in data) {
+			const id = Number((data as { id: unknown }).id);
+			if (Number.isFinite(id)) return id;
 		}
-		return data.id;
+		if (typeof data === 'string') {
+			const id = Number(data);
+			if (Number.isFinite(id)) return id;
+		}
+		throw new Error('invalid search start response');
 	}
 
 	const id = Number(trimmed);
@@ -223,7 +222,41 @@ export async function searchStart(
 	return id;
 }
 
+function parseSearchResultsResponse(text: string): SearchResults {
+	const trimmed = text.trim();
+	if (!trimmed) {
+		throw new Error('empty search results response');
+	}
+
+	const data = JSON.parse(trimmed);
+	if (typeof data !== 'object' || data === null || !('results' in data)) {
+		throw new Error('invalid search results response');
+	}
+
+	return data as SearchResults;
+}
+
+export async function searchStart(
+	pattern: string,
+	plugins = 'all',
+	category = 'all'
+): Promise<number> {
+	const res = await post('search/start', new URLSearchParams({ pattern, plugins, category }));
+	const text = await res.text();
+	return parseSearchStartResponse(text);
+}
+
 export async function searchResults(id: number, limit?: number, offset?: number): Promise<SearchResults> {
+	const params: Record<string, string> = { id: String(id) };
+	if (limit !== undefined) params.limit = String(limit);
+	if (offset !== undefined) params.offset = String(offset);
+	const url = new URL(`${api}/search/results`, window.location.origin);
+	Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+	const res = await fetch(url.toString());
+	if (!res.ok) throw new Error(`api error: ${res.status} ${res.statusText}`);
+	const text = await res.text();
+	return parseSearchResultsResponse(text);
+}
 	const params: Record<string, string> = { id: String(id) };
 	if (limit !== undefined) params.limit = String(limit);
 	if (offset !== undefined) params.offset = String(offset);

@@ -66,11 +66,9 @@
 	}
 
 	function getProgressFillColor(t: Torrent): string {
-		// Use the requested orange for anything that represents download progress
-		if (isDownloadLikeState(t.state)) return '#f6b012';
-
-		// Keep existing colors for seeding/uploading
-		return getStateColor(t.state).bg;
+		// The bar is a completion indicator, so use the orange fill for any
+		// torrent that has progress rather than mapping it to the state badge color.
+		return (t.progress ?? 0) > 0 ? '#f6b012' : 'var(--color-border-medium)';
 	}
 
 	function formatBytes(bytes: number): string {

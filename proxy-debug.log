@@ -1,3 +1,10 @@
 {"timestamp":"2026-05-13T19:26:44.912Z","slug":"auth/login","method":"POST","url":"/api/v2/auth/login"}
 {"timestamp":"2026-05-13T19:26:44.913Z","upstreamUrl":"http://localhost:8081/api/v2/auth/login","headers":{"Content-Type":"application/x-www-form-urlencoded"},"body":"username=house&password=FR1%21qbittorrent"}
 {"timestamp":"2026-05-13T19:26:44.998Z","slug":"sync/maindata","method":"HEAD","url":"/api/v2/sync/maindata"}
+{"timestamp":"2026-05-13T20:16:59.999Z","slug":"sync/maindata","method":"GET","url":"/api/v2/sync/maindata"}
+{"timestamp":"2026-05-13T20:17:00.073Z","slug":"sync/maindata","method":"GET","url":"/api/v2/sync/maindata?rid=0"}
+{"timestamp":"2026-05-13T20:17:02.075Z","slug":"sync/maindata","method":"GET","url":"/api/v2/sync/maindata?rid=0"}
+{"timestamp":"2026-05-13T20:17:04.087Z","slug":"sync/maindata","method":"GET","url":"/api/v2/sync/maindata?rid=0"}
+{"timestamp":"2026-05-13T20:17:06.077Z","slug":"sync/maindata","method":"GET","url":"/api/v2/sync/maindata?rid=0"}
+{"timestamp":"2026-05-13T20:17:08.075Z","slug":"sync/maindata","method":"GET","url":"/api/v2/sync/maindata?rid=0"}
+{"timestamp":"2026-05-13T20:17:10.079Z","slug":"sync/maindata","method":"GET","url":"/api/v2/sync/maindata?rid=0"}

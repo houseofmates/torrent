@@ -94,45 +94,54 @@ async function proxyRequest(
 	const apiUrl = new URL(`${QBIT_URL}/api/v2/${params.slug}`);
 	apiUrl.search = url.search;
 
-	async function doFetch(withSid: string | null) {
-		const clientCookie = request.headers.get('cookie');
-		const mergedCookie = mergeCookies(clientCookie, withSid);
+	function buildUpstreamHeaders(cookie: string | null) {
+		const headers: Record<string, string> = {};
+		if (cookie) {
+			headers['Cookie'] = cookie;
+		}
+		if (method === 'POST') {
+			headers['Content-Type'] =
+				request.headers.get('content-type') ||
+				'application/x-www-form-urlencoded';
+		}
+		return headers;
+	}
 
+	async function doFetch(withSid: string | null) {
 		return fetch(apiUrl, {
 			method,
-			headers: {
-				'Cookie': mergedCookie,
-				...(method === 'POST'
-					? {
-							'Content-Type':
-								request.headers.get('content-type') ||
-								'application/x-www-form-urlencoded'
-						}
-					: {})
-			},
+			headers: buildUpstreamHeaders(withSid),
 			...(method === 'POST' ? { body: bodyText } : {})
 		});
 	}
 
 	try {
-		// Reuse the same qBittorrent session cookie across requests to keep search jobs valid.
-		let sidCookie = await loginAndGetCookieHeader();
-		let res = await doFetch(sidCookie);
+		const isLoginRequest = params.slug === 'auth/login' && method === 'POST';
 
-		// Retry once on 403: re-login and try again.
-		if (res.status === 403) {
-			sidCookie = await loginAndGetCookieHeader();
-			res = await doFetch(sidCookie);
+		if (isLoginRequest) {
+			const res = await doFetch(null);
+			const setCookies: string[] = [];
+			res.headers.forEach((value, key) => {
+				if (key.toLowerCase() === 'set-cookie') setCookies.push(value);
+			});
+
+			if (!res.ok) {
+				const errorBody = await res.text();
+				console.error(`qBittorrent auth/login failed: ${res.status} ${res.statusText} ${errorBody.slice(0, 1000)}`);
+				return new Response(
+					JSON.stringify({
+						error: 'upstream auth/login failed',
+						status: res.status,
+						bodySnippet: errorBody.slice(0, 1000)
+					}),
+					{ status: res.status, headers: { 'Content-Type': 'application/json' } }
+				);
+			}
+
+			cachedSidCookie = extractCookiesFromSetCookie(setCookies);
+			return new Response(res.body, { status: res.status, headers: forwardCookies(res) });
 		}
 
-		// Improve visibility when qBittorrent denies access/auth.
-		if (res.status === 401 || res.status === 403) {
-			const text = await res.text();
-			const snippet = text.slice(0, 500);
-			return new Response(
-				JSON.stringify({
-					error: 'upstream auth failed',
-					upstreamStatus: res.status,
 					upstreamBodySnippet: snippet
 				}),
 				{

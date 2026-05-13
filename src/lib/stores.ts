@@ -159,9 +159,12 @@ export async function doLogin(username: string, password: string): Promise<boole
 				.then((plugins) => searchPlugins.set(plugins))
 				.catch(() => {});
 			addToast('connected', 'success');
+		} else {
+			connectionError.set('login failed. check credentials or connection.');
 		}
 		return ok;
-	} catch {
+	} catch (err) {
+		connectionError.set(err instanceof Error ? err.message : String(err));
 		addToast('connection failed. is qbittorrent running?', 'error');
 		return false;
 	}

@@ -11,7 +11,7 @@
 	type SortDirection = 'asc' | 'desc';
 
 	let searchQuery = $state('');
-	let sortField = $state<SortField>('name');
+	let sortField = $state<SortField>('progress');
 	let sortDirection = $state<SortDirection>('desc');
 	let contextMenu = $state<{ items: ContextMenuItem[]; x: number; y: number; torrent: Torrent } | null>(null);
 

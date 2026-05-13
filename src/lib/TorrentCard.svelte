@@ -54,10 +54,15 @@
 		return labels[state] ?? state;
 	}
 
+	function normalizeProgress(value: unknown): number {
+		const numeric = Number(value ?? 0);
+		if (!Number.isFinite(numeric) || numeric <= 0) return 0;
+		if (numeric > 1) return Math.min(1, numeric / 100);
+		return Math.min(1, numeric);
+	}
+
 	function getProgressFillColor(t: Torrent): string {
-		// The bar is a completion indicator, so use the orange fill for any
-		// torrent that has progress rather than mapping it to the state badge color.
-		return (t.progress ?? 0) > 0 ? '#f6b012' : 'var(--color-border-medium)';
+		return normalizeProgress(t.progress) > 0 ? '#f6b012' : 'var(--color-border-medium)';
 	}
 
 	function formatBytes(bytes: number): string {
@@ -75,8 +80,8 @@
 	}
 
 	let progressPct = $derived(() => {
-		const value = Math.round((torrent.progress ?? 0) * 100);
-		return Math.min(100, Math.max(0, value));
+		const value = normalizeProgress(torrent.progress) * 100;
+		return Math.min(100, Math.max(0, Math.floor(value)));
 	});
 
 	async function togglePause() {

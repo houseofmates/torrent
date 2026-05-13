@@ -196,10 +196,16 @@ async function proxyApi(req, res, slug) {
   const upstreamUrl = buildQbitUrl(slug, req.url || '/');
   const body = req.method === 'POST' || req.method === 'PUT' ? await readRequestBody(req) : null;
 
-  async function doFetch(cookie) {
+  async function doFetch(cookie, minimalHeaders = false) {
+    const headers = minimalHeaders
+      ? {
+          'Content-Type': req.headers['content-type'] || 'application/x-www-form-urlencoded'
+        }
+      : buildHeaders(req.headers, cookie);
+
     return fetch(upstreamUrl.toString(), {
       method: req.method,
-      headers: buildHeaders(req.headers, cookie),
+      headers,
       body: body?.length ? body : undefined
     });
   }

@@ -82,7 +82,8 @@ function buildHeaders(reqHeaders, sidCookie) {
 async function loginCookie() {
   if (!QBIT_URL || !QBIT_USERNAME || !QBIT_PASSWORD) return null;
   const loginUrl = new URL(QBIT_URL);
-  loginUrl.pathname = path.posix.join(loginUrl.pathname, 'api/v2/auth/login');
+  const prefix = normalizeApiPath(loginUrl.pathname);
+  loginUrl.pathname = path.posix.join(prefix, 'auth/login');
 
   const res = await fetch(loginUrl.toString(), {
     method: 'POST',

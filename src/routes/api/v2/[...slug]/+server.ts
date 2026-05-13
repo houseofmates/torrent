@@ -115,7 +115,7 @@ async function proxyRequest(
 	}
 
 	try {
-	// Login per request so we always have a fresh/valid SID.
+		// Reuse the same qBittorrent session cookie across requests to keep search jobs valid.
 		let sidCookie = await loginAndGetCookieHeader();
 		let res = await doFetch(sidCookie);
 

@@ -1,7 +1,0 @@
-Loaded .env fallback from /home/house/torrent/.env
-Starting torrent app server...
-QBITTORRENT_API_URL: http://localhost:8081
-QBITTORRENT_USERNAME: house
-QBITTORRENT_PASSWORD: (set)
-PORT: 3004
-Torrent app server running on http://0.0.0.0:3004

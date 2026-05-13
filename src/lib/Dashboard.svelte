@@ -25,22 +25,29 @@
 	let longPressTimer: ReturnType<typeof setTimeout> | null = null;
 	let longPressFired = $state(false);
 
+	function getNumericValue(value: unknown): number {
+		const numeric = Number(value ?? 0);
+		return Number.isFinite(numeric) ? numeric : 0;
+	}
+
 	function compareTorrents(a: Torrent, b: Torrent): number {
 		const primary = (() => {
 			switch (sortField) {
 				case 'name': return a.name.localeCompare(b.name);
-				case 'progress': return (a.progress ?? 0) - (b.progress ?? 0);
-				case 'size': return (a.size ?? 0) - (b.size ?? 0);
-				case 'dlspeed': return (a.dlspeed ?? 0) - (b.dlspeed ?? 0);
-				case 'upspeed': return (a.upspeed ?? 0) - (b.upspeed ?? 0);
-				case 'eta': return (a.eta ?? 0) - (b.eta ?? 0);
-				case 'ratio': return (a.ratio ?? 0) - (b.ratio ?? 0);
+				case 'progress': return getNumericValue(a.progress) - getNumericValue(b.progress);
+				case 'size': return getNumericValue(a.size) - getNumericValue(b.size);
+				case 'dlspeed': return getNumericValue(a.dlspeed) - getNumericValue(b.dlspeed);
+				case 'upspeed': return getNumericValue(a.upspeed) - getNumericValue(b.upspeed);
+				case 'eta': return getNumericValue(a.eta) - getNumericValue(b.eta);
+				case 'ratio': return getNumericValue(a.ratio) - getNumericValue(b.ratio);
 				case 'state': return (a.state ?? '').localeCompare(b.state ?? '');
+				default: return 0;
 			}
 		})();
 
-		if (primary !== 0) {
-			return sortDirection === 'desc' ? -primary : primary;
+		const safePrimary = Number.isFinite(primary) ? primary : 0;
+		if (safePrimary !== 0) {
+			return sortDirection === 'desc' ? -safePrimary : safePrimary;
 		}
 
 		const nameFallback = a.name.localeCompare(b.name);

@@ -5,7 +5,9 @@ cd /home/house/torrent
 
 # Load environment variables from .env file
 if [ -f .env ]; then
-    export $(cat .env | xargs)
+    set -a
+    . .env
+    set +a
 fi
 
 while true; do

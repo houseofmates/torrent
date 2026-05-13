@@ -79,8 +79,12 @@ function buildHeaders(reqHeaders, sidCookie) {
   return headers;
 }
 
-async function loginCookie() {
+let cachedSidCookie = null;
+
+async function loginCookie(force = false) {
   if (!QBIT_URL || !QBIT_USERNAME || !QBIT_PASSWORD) return null;
+  if (cachedSidCookie && !force) return cachedSidCookie;
+
   const loginUrl = new URL(QBIT_URL);
   const prefix = normalizeApiPath(loginUrl.pathname);
   loginUrl.pathname = path.posix.join(prefix, 'auth/login');
@@ -102,7 +106,8 @@ async function loginCookie() {
     }
   }
 
-  return cookies.length > 0 ? cookies.join('; ') : null;
+  cachedSidCookie = cookies.length > 0 ? cookies.join('; ') : null;
+  return cachedSidCookie;
 }
 
 async function proxyApi(req, res, slug) {
@@ -112,16 +117,24 @@ async function proxyApi(req, res, slug) {
   }
 
   const upstreamUrl = buildQbitUrl(slug, req.url || '/');
-  const sidCookie = await loginCookie();
-  const headers = buildHeaders(req.headers, sidCookie);
+  let sidCookie = await loginCookie();
+  let headers = buildHeaders(req.headers, sidCookie);
   const body = req.method === 'POST' || req.method === 'PUT' ? await readRequestBody(req) : null;
 
-  try {
-    const upstreamRes = await fetch(upstreamUrl.toString(), {
+  async function doFetch(cookie) {
+    return fetch(upstreamUrl.toString(), {
       method: req.method,
-      headers,
+      headers: buildHeaders(req.headers, cookie),
       body: body?.length ? body : undefined
     });
+  }
+
+  try {
+    let upstreamRes = await doFetch(sidCookie);
+    if (upstreamRes.status === 403) {
+      sidCookie = await loginCookie(true);
+      upstreamRes = await doFetch(sidCookie);
+    }
 
     const responseHeaders = {};
     upstreamRes.headers.forEach((value, key) => {

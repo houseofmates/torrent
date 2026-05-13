@@ -193,6 +193,7 @@ async function proxyApi(req, res, slug) {
     return;
   }
 
+  console.error('proxyApi called:', slug, req.method, req.url);
   await fs.appendFile(path.join(__dirname, 'proxy-debug.log'), JSON.stringify({
     timestamp: new Date().toISOString(),
     slug,

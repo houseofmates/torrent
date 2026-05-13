@@ -97,7 +97,12 @@ async function loginCookie(force = false) {
     body: new URLSearchParams({ username: QBIT_USERNAME, password: QBIT_PASSWORD }).toString()
   });
 
-  if (!res.ok) return null;
+  if (!res.ok) {
+    console.error(`qBittorrent login failed: ${res.status} ${res.statusText}`);
+    const errorBody = await res.text();
+    console.error(`qBittorrent login error body: ${errorBody}`);
+    return null;
+  }
 
   const cookies = [];
   for (const [key, value] of res.headers.entries()) {

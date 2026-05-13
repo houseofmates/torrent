@@ -74,8 +74,23 @@ function getContentType(filePath) {
 }
 
 function respondJSON(res, status, payload) {
-  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+  res.writeHead(status, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'no-store'
+  });
   res.end(JSON.stringify(payload));
+}
+
+function getCacheControl(filePath) {
+  if (filePath.endsWith('index.html') || filePath.endsWith('manifest.json') || filePath.endsWith('robots.txt')) {
+    return 'no-store';
+  }
+
+  if (filePath.includes(`${path.sep}_app${path.sep}immutable${path.sep}`)) {
+    return 'public, max-age=31536000, immutable';
+  }
+
+  return 'no-cache';
 }
 
 async function readRequestBody(req) {

@@ -49,16 +49,19 @@ async function readRequestBody(req) {
   return Buffer.concat(chunks);
 }
 
+function normalizeApiPath(pathname) {
+  let normalized = path.posix.normalize(pathname.replace(/\/api\/v2(\/api\/v2)+/g, '/api/v2'));
+  if (!normalized.endsWith('/')) normalized += '/';
+  if (!normalized.includes('/api/v2/')) {
+    normalized = path.posix.join(normalized, 'api/v2/');
+  }
+  return normalized.replace(/\/+/g, '/');
+}
+
 function buildQbitUrl(slug, originalUrl) {
   const url = new URL(QBIT_URL);
-  const normalizedPath = path.posix.join(url.pathname, slug);
-  const apiPath = normalizedPath.replace(/\/api\/v2\/api\/v2\//, '/api/v2/');
-  url.pathname = apiPath;
-
-  if (!url.pathname.includes('/api/v2/')) {
-    url.pathname = path.posix.join(url.pathname, 'api/v2', slug);
-  }
-
+  const prefix = normalizeApiPath(url.pathname);
+  url.pathname = path.posix.join(prefix, slug);
   const incomingUrl = new URL(originalUrl, `http://localhost`);
   url.search = incomingUrl.search;
   return url;

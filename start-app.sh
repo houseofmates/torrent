@@ -3,6 +3,11 @@
 
 cd /home/house/torrent
 
+# Load environment variables from .env file
+if [ -f .env ]; then
+    export $(cat .env | xargs)
+fi
+
 while true; do
     echo "Building torrent app..."
     npm run build

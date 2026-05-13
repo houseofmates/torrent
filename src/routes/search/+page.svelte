@@ -258,7 +258,7 @@
 							</div>
 						</div>
 						<button
-							onclick={() => download(result)}
+							onclick={() => download(result, index)}
 							disabled={downloading[result.fileName]}
 							class="px-3 py-2 text-xs font-bold border whitespace-nowrap disabled:opacity-40 transition-all duration-150 active:scale-[0.98] flex-shrink-0"
 							style="background: {downloading[result.fileName] ? 'transparent' : 'var(--color-accent-blue)'}; border-color: var(--color-accent-blue); border-radius: 6px; color: {downloading[result.fileName] ? 'var(--color-text-info)' : '#050505'};"

@@ -107,8 +107,32 @@ export async function doLogin(username: string, password: string): Promise<boole
 	try {
 		const ok = await api.login(username, password);
 		if (ok) {
+			const data = await api.syncMaindata(0);
+			if (data.rid !== undefined) lastRid = data.rid;
+			maindata.set(data);
+
+			if (data.torrents) {
+				const current = get(torrents);
+				const existing = current.reduce<Record<string, Torrent>>((acc, t) => {
+					acc[t.hash] = t;
+					return acc;
+				}, {});
+
+				const incoming = data.torrents as Record<string, Torrent>;
+				const updated = Object.values(incoming).map((t) => {
+					existing[t.hash] = { ...existing[t.hash], ...t };
+					return existing[t.hash];
+				});
+
+				if (data.torrents_removed) {
+					const removed = new Set(data.torrents_removed);
+					torrents.set(updated.filter((t) => !removed.has(t.hash)));
+				} else {
+					torrents.set(updated);
+				}
+			}
+
 			isAuthenticated.set(true);
-			lastRid = 0;
 			startPolling();
 			api.getCategories()
 				.then((cats) => categories.set(cats))

@@ -25,26 +25,39 @@
 	let longPressTimer: ReturnType<typeof setTimeout> | null = null;
 	let longPressFired = $state(false);
 
+	function compareTorrents(a: Torrent, b: Torrent): number {
+		const primary = (() => {
+			switch (sortField) {
+				case 'name': return a.name.localeCompare(b.name);
+				case 'progress': return (a.progress ?? 0) - (b.progress ?? 0);
+				case 'size': return (a.size ?? 0) - (b.size ?? 0);
+				case 'dlspeed': return (a.dlspeed ?? 0) - (b.dlspeed ?? 0);
+				case 'upspeed': return (a.upspeed ?? 0) - (b.upspeed ?? 0);
+				case 'eta': return (a.eta ?? 0) - (b.eta ?? 0);
+				case 'ratio': return (a.ratio ?? 0) - (b.ratio ?? 0);
+				case 'state': return (a.state ?? '').localeCompare(b.state ?? '');
+			}
+		})();
+
+		if (primary !== 0) {
+			return sortDirection === 'desc' ? -primary : primary;
+		}
+
+		const nameFallback = a.name.localeCompare(b.name);
+		if (nameFallback !== 0) {
+			return nameFallback;
+		}
+
+		return a.hash.localeCompare(b.hash);
+	}
+
 	let filteredTorrents = $derived.by(() => {
 		const items = $torrents as Torrent[];
 		let result = items.filter((t) =>
 			t.name.toLowerCase().includes(searchQuery.toLowerCase())
 		);
 
-		result.sort((a, b) => {
-			let comparison = 0;
-			switch (sortField) {
-				case 'name': comparison = a.name.localeCompare(b.name); break;
-				case 'progress': comparison = (a.progress || 0) - (b.progress || 0); break;
-				case 'size': comparison = (a.size || 0) - (b.size || 0); break;
-				case 'dlspeed': comparison = (a.dlspeed || 0) - (b.dlspeed || 0); break;
-				case 'upspeed': comparison = (a.upspeed || 0) - (b.upspeed || 0); break;
-				case 'eta': comparison = (a.eta || 0) - (b.eta || 0); break;
-				case 'ratio': comparison = (a.ratio || 0) - (b.ratio || 0); break;
-				case 'state': comparison = (a.state || '').localeCompare(b.state || ''); break;
-			}
-			return sortDirection === 'desc' ? -comparison : comparison;
-		});
+		result.sort(compareTorrents);
 
 		return result;
 	});

@@ -79,7 +79,7 @@ function forwardCookies(response: Response): Headers {
 
 function mergeCookies(_reqCookie: string | null | undefined, upstreamCookie: string | null): string {
 	// We intentionally only send cookies obtained from qBittorrent login.
-	return upstreamCookie || '';
+	return upstreamCookie || cachedSidCookie || '';
 }
 
 async function proxyRequest(

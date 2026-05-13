@@ -51,7 +51,14 @@ async function readRequestBody(req) {
 
 function buildQbitUrl(slug, originalUrl) {
   const url = new URL(QBIT_URL);
-  url.pathname = path.posix.join(url.pathname, 'api/v2', slug);
+  const normalizedPath = path.posix.join(url.pathname, slug);
+  const apiPath = normalizedPath.replace(/\/api\/v2\/api\/v2\//, '/api/v2/');
+  url.pathname = apiPath;
+
+  if (!url.pathname.includes('/api/v2/')) {
+    url.pathname = path.posix.join(url.pathname, 'api/v2', slug);
+  }
+
   const incomingUrl = new URL(originalUrl, `http://localhost`);
   url.search = incomingUrl.search;
   return url;

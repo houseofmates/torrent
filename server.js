@@ -235,7 +235,7 @@ async function proxyApi(req, res, slug) {
         responseHeaders['Set-Cookie'] = responseHeaders['Set-Cookie']
           ? [].concat(responseHeaders['Set-Cookie'], value)
           : value;
-      } else if (key.toLowerCase() === 'content-encoding' || key.toLowerCase() === 'transfer-encoding') {
+      } else if (key.toLowerCase() === 'content-encoding' || key.toLowerCase() === 'transfer-encoding' || key.toLowerCase() === 'content-length') {
         return;
       } else {
         responseHeaders[key] = value;

@@ -54,15 +54,65 @@
 		return labels[state] ?? state;
 	}
 
-	function normalizeProgress(value: unknown): number {
-		const numeric = Number(value ?? 0);
-		if (!Number.isFinite(numeric) || numeric <= 0) return 0;
-		if (numeric > 1) return Math.min(1, numeric / 100);
-		return Math.min(1, numeric);
+	const uploadStates = new Set([
+		'seeding',
+		'uploading',
+		'pausedUP',
+		'queuedUP',
+		'stalledUP',
+		'forcedUP',
+	]);
+
+	function isUploadState(state: string): boolean {
+		return uploadStates.has(state);
+	}
+
+	function isSeedingOrComplete(t: Torrent): boolean {
+		return isUploadState(t.state) || t.progress >= 1;
+	}
+
+	function normalizeProgress(t: Torrent): number {
+		if (isSeedingOrComplete(t)) {
+			if (t.size > 0 && Number.isFinite(t.uploaded)) {
+				return Math.min(1, Math.max(0, t.uploaded / t.size));
+			}
+			return 0;
+		}
+
+		const raw = Number(t.progress ?? 0);
+		if (!Number.isFinite(raw) || raw <= 0) return 0;
+
+		const byteRatio = t.size > 0 && t.downloaded >= 0
+			? Math.min(1, Math.max(0, t.downloaded / t.size))
+			: NaN;
+
+		const progress = raw > 1 ? Math.min(1, raw / 100) : Math.min(1, raw);
+
+		if (!Number.isNaN(byteRatio)) {
+			if (progress >= 1 || progress - byteRatio > 0.1) {
+				return byteRatio;
+			}
+		}
+
+		return progress;
 	}
 
 	function getProgressFillColor(t: Torrent): string {
-		return normalizeProgress(t.progress) > 0 ? '#f6b012' : 'var(--color-border-medium)';
+		const ratio = normalizeProgress(t);
+		if (ratio <= 0) return 'var(--color-border-medium)';
+		return isSeedingOrComplete(t) ? '#5fd7ff' : '#f6b012';
+	}
+
+	function getProgressLabel(t: Torrent): string {
+		return isSeedingOrComplete(t) ? 'uploaded' : 'downloaded';
+	}
+
+	function getProgressBytes(t: Torrent): string {
+		if (isSeedingOrComplete(t)) {
+			return formatBytes(t.uploaded);
+		}
+		const displayDownloaded = t.size > 0 ? Math.min(t.downloaded, t.size) : t.downloaded;
+		return formatBytes(displayDownloaded);
 	}
 
 	function formatBytes(bytes: number): string {
@@ -80,7 +130,7 @@
 	}
 
 	let progressPct = $derived(() => {
-		const value = normalizeProgress(torrent.progress) * 100;
+		const value = normalizeProgress(torrent) * 100;
 		return Math.min(100, Math.max(0, Math.floor(value)));
 	});
 
@@ -133,7 +183,7 @@
 	<!-- stats row + hover actions aligned under the status pill -->
 	<div class="flex items-start justify-between gap-3">
 		<div class="flex flex-wrap gap-x-4 gap-y-1 text-xs" style="font-variant-numeric: tabular-nums;">
-			<span>{formatBytes(torrent.downloaded)} / {formatBytes(torrent.size)}</span>
+			<span>{getProgressLabel(torrent)}: {getProgressBytes(torrent)} / {formatBytes(torrent.size)}</span>
 			{#if torrent.dlspeed > 0}
 				<span style="color: var(--color-accent-blue);">↓ {formatBytes(torrent.dlspeed)}/s</span>
 			{/if}

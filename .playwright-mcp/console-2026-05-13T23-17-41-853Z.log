@@ -1,0 +1,198 @@
+[      94ms] [WARNING] <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes"> @ https://tor.houseofmates.space/:0
+[     169ms] [LOG] [stores] pollMaindata start, lastRid= 0 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[     169ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=0 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[     213ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[     216ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[     217ms] [LOG] [stores] pollMaindata success, rid= 19 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[     217ms] [LOG] [dashboard] server_state received, loading= true @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[     226ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[    2170ms] [LOG] [stores] pollMaindata start, lastRid= 19 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    2170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=19 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    2208ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    2210ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    2210ms] [LOG] [stores] pollMaindata success, rid= 21 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    2213ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[    4170ms] [LOG] [stores] pollMaindata start, lastRid= 21 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    4170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=21 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    4205ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    4209ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    4209ms] [LOG] [stores] pollMaindata success, rid= 23 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    4210ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[    6170ms] [LOG] [stores] pollMaindata start, lastRid= 23 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    6170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=23 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    6207ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    6208ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    6209ms] [LOG] [stores] pollMaindata success, rid= 25 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    6210ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[    8170ms] [LOG] [stores] pollMaindata start, lastRid= 25 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    8170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=25 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    8212ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    8223ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    8223ms] [LOG] [stores] pollMaindata success, rid= 27 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[    8225ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   10170ms] [LOG] [stores] pollMaindata start, lastRid= 27 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   10170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=27 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   10206ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   10209ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   10209ms] [LOG] [stores] pollMaindata success, rid= 29 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   10210ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   12170ms] [LOG] [stores] pollMaindata start, lastRid= 29 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   12170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=29 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   12211ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   12213ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   12214ms] [LOG] [stores] pollMaindata success, rid= 31 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   12215ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   14170ms] [LOG] [stores] pollMaindata start, lastRid= 31 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   14170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=31 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   14207ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   14210ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   14210ms] [LOG] [stores] pollMaindata success, rid= 33 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   14212ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   16170ms] [LOG] [stores] pollMaindata start, lastRid= 33 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   16170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=33 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   16215ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   16222ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   16222ms] [LOG] [stores] pollMaindata success, rid= 35 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   16224ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   18170ms] [LOG] [stores] pollMaindata start, lastRid= 35 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   18170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=35 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   18207ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   18208ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   18208ms] [LOG] [stores] pollMaindata success, rid= 37 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   18209ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   20170ms] [LOG] [stores] pollMaindata start, lastRid= 37 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   20170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=37 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   20206ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   20210ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   20210ms] [LOG] [stores] pollMaindata success, rid= 39 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   20211ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   22170ms] [LOG] [stores] pollMaindata start, lastRid= 39 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   22170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=39 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   22209ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   22212ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   22213ms] [LOG] [stores] pollMaindata success, rid= 41 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   22213ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   24170ms] [LOG] [stores] pollMaindata start, lastRid= 41 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   24170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=41 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   24207ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   24212ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   24212ms] [LOG] [stores] pollMaindata success, rid= 43 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   24213ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   26170ms] [LOG] [stores] pollMaindata start, lastRid= 43 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   26170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=43 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   26208ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   26211ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   26211ms] [LOG] [stores] pollMaindata success, rid= 45 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   26212ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   28170ms] [LOG] [stores] pollMaindata start, lastRid= 45 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   28170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=45 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   28208ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   28210ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   28210ms] [LOG] [stores] pollMaindata success, rid= 47 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   28211ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   30170ms] [LOG] [stores] pollMaindata start, lastRid= 47 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   30170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=47 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   30210ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   30215ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   30215ms] [LOG] [stores] pollMaindata success, rid= 49 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   30216ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   32170ms] [LOG] [stores] pollMaindata start, lastRid= 49 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   32170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=49 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   32210ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   32220ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   32221ms] [LOG] [stores] pollMaindata success, rid= 51 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   32223ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   34170ms] [LOG] [stores] pollMaindata start, lastRid= 51 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   34170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=51 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   34208ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   34223ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   34224ms] [LOG] [stores] pollMaindata success, rid= 53 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   34225ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   36170ms] [LOG] [stores] pollMaindata start, lastRid= 53 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   36170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=53 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   36204ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   36217ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   36217ms] [LOG] [stores] pollMaindata success, rid= 55 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   36218ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   38170ms] [LOG] [stores] pollMaindata start, lastRid= 55 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   38170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=55 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   38197ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   38198ms] [LOG] [api] parsed json keys [rid, server_state, torrents] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   38198ms] [LOG] [stores] pollMaindata success, rid= 56 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   38205ms] TypeError: Cannot read properties of undefined (reading 'localeCompare')
+    at ne (https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:2:16108)
+    at Array.sort (<anonymous>)
+    at https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:2:16225
+    at Pr (https://tor.houseofmates.space/_app/immutable/chunks/CbYvtHfg.js:1:27320)
+    at yn (https://tor.houseofmates.space/_app/immutable/chunks/CbYvtHfg.js:1:18065)
+    at bn (https://tor.houseofmates.space/_app/immutable/chunks/CbYvtHfg.js:1:18114)
+    at Mr (https://tor.houseofmates.space/_app/immutable/chunks/CbYvtHfg.js:1:26891)
+    at #_ (https://tor.houseofmates.space/_app/immutable/chunks/CbYvtHfg.js:1:8451)
+    at #g (https://tor.houseofmates.space/_app/immutable/chunks/CbYvtHfg.js:1:7777)
+    at e.flush (https://tor.houseofmates.space/_app/immutable/chunks/CbYvtHfg.js:1:8879)
+[   40170ms] [LOG] [stores] pollMaindata start, lastRid= 56 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   40170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=56 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   40221ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   40223ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   40224ms] [LOG] [stores] pollMaindata success, rid= 58 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   40224ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   42170ms] [LOG] [stores] pollMaindata start, lastRid= 58 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   42170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=58 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   42210ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   42216ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   42216ms] [LOG] [stores] pollMaindata success, rid= 60 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   42216ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   44170ms] [LOG] [stores] pollMaindata start, lastRid= 60 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   44170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=60 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   44215ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   44217ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   44217ms] [LOG] [stores] pollMaindata success, rid= 62 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   44218ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   46170ms] [LOG] [stores] pollMaindata start, lastRid= 62 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   46170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=62 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   46215ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   46218ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   46218ms] [LOG] [stores] pollMaindata success, rid= 64 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   46218ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   48170ms] [LOG] [stores] pollMaindata start, lastRid= 64 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   48170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=64 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   48200ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://tor.houseofmates.space/api/v2/sync/maindata?rid=64:0
+[   48200ms] [LOG] [api] response status 502 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   48200ms] [LOG] [stores] pollMaindata error: api error: 502  @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   48202ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   50170ms] [LOG] [stores] pollMaindata start, lastRid= 64 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   50170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=64 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   50198ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://tor.houseofmates.space/api/v2/sync/maindata?rid=64:0
+[   50198ms] [LOG] [api] response status 502 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   50198ms] [LOG] [stores] pollMaindata error: api error: 502  @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   50198ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   52170ms] [LOG] [stores] pollMaindata start, lastRid= 64 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   52171ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=64 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   52211ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://tor.houseofmates.space/api/v2/sync/maindata?rid=64:0
+[   52211ms] [LOG] [api] response status 502 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   52211ms] [LOG] [stores] pollMaindata error: api error: 502  @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   52212ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   54170ms] [LOG] [stores] pollMaindata start, lastRid= 64 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   54170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=64 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   54198ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://tor.houseofmates.space/api/v2/sync/maindata?rid=64:0
+[   54198ms] [LOG] [api] response status 502 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   54198ms] [LOG] [stores] pollMaindata error: api error: 502  @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   54198ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   56170ms] [LOG] [stores] pollMaindata start, lastRid= 64 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   56170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=64 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   56308ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   56314ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   56314ms] [LOG] [stores] pollMaindata success, rid= 1 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   56319ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   58170ms] [LOG] [stores] pollMaindata start, lastRid= 1 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   58170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=1 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   58207ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   58215ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   58215ms] [LOG] [stores] pollMaindata success, rid= 3 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   58217ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1
+[   60170ms] [LOG] [stores] pollMaindata start, lastRid= 3 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   60170ms] [LOG] [api] fetching https://tor.houseofmates.space/api/v2/sync/maindata?rid=3 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   60212ms] [LOG] [api] response status 200 @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   60230ms] [LOG] [api] parsed json keys [categories, full_update, rid, server_state, torrents, trackers] @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   60230ms] [LOG] [stores] pollMaindata success, rid= 5 has server_state= true @ https://tor.houseofmates.space/_app/immutable/chunks/DEwgYRzk.js:0
+[   60231ms] [LOG] [dashboard] server_state received, loading= false @ https://tor.houseofmates.space/_app/immutable/nodes/2.CpI3dHTj.js:1

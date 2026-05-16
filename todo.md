@@ -1,0 +1,6 @@
+- [x] Inspect Dashboard loading timeout (verify present)
+- [x] Inspect stores polling/maindata error handling (already updates maindata on error)
+- [x] Fix navigation not working by switching nav links to SvelteKit `goto`
+- [ ] Verify proxy endpoint works by checking api call paths
+- [x] Fix runtime errors in Dashboard (store_invalid_shape + duplicate each keys)
+- [ ] Re-test: dashboard skeleton resolves without reload; click “search” works; global right click shows settings menu; /settings loads

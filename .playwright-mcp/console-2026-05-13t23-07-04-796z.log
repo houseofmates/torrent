@@ -1,0 +1,5 @@
+[     399ms] [WARNING] <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes"> @ https://tor.houseofmates.space/:0
+[  276602ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://tor.houseofmates.space/api/v2/sync/maindata?rid=0:0
+[  278599ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://tor.houseofmates.space/api/v2/sync/maindata?rid=0:0
+[  280602ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://tor.houseofmates.space/api/v2/sync/maindata?rid=0:0
+[  282605ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://tor.houseofmates.space/api/v2/sync/maindata?rid=0:0
